@@ -14,3 +14,8 @@ The **guide/notes of the course: `Statistics_Python_1_Visuaization.md`**.
 Overview of contents:
 
 - `Statistics_Python_1_Visuaization.md`: guide, notes.
+- `lab/`
+  - `lab/01_DataManagement.ipynb`
+  - `lab/Cartwheeldata.csv`
+  - `lab/nhanes_2015_2016.csv`
+  
