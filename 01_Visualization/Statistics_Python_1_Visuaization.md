@@ -122,3 +122,17 @@ Very few comments made here, since I have year-long experience with python and J
 Interesting link on Markdown: [Markdown reference/cheatsheet](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet).
 
 We can create our own notebooks in the course environment/workspace.
+
+After a brief python introduction, `pandas` basics are shown and the two main datasets used throughout the course are tried. The following notebook summarizes it all:
+
+`./lab/01_DataManagement.ipynb`.
+
+The contents in the notebook:
+
+1. Pandas DataFrames: Intro with the Cartwheel Dataset
+   - Selection
+   - Group By
+2. Pandas DataFrame - NHANES Dataset
+3. Python guidelines
+   - Cheatseets: NUmpy, Pandas, Scipy, Matplotlib
+   - Style guidelines (based on Google)
