@@ -222,3 +222,35 @@ Some interesting links:
 
 ## 5. Python for Univariate Data Analysis
 
+This section consists on lab sessions condensed in the following notebooks:
+
+- `01_DataManagement.ipynb`
+- `02_PythonLibraries.ipynb`
+- `03_CaseStudy_NHANES.ipynb`
+- `04_Exercise_NHANES.ipynb`
+
+In the following, the most important commands/functions are summarized:
+
+### 5.1 `01_DataManagement.ipynb`
+
+```python
+
+```
+
+### 5.2 `02_PythonLibraries.ipynb`
+
+```python
+
+```
+
+### 5.3 `03_CaseStudy_NHANES.ipynb`
+
+```python
+
+```
+
+### 5.4 `04_Exercise_NHANES.ipynb`
+
+```python
+
+```
