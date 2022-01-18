@@ -175,7 +175,7 @@ The **empirical rule of 68-95-99.7** tells us the percentage of samples that lie
 
 The **standard score** is also known as the **Z-score** for the normal distribution; it tells us how far away a measurement/sample is from the mean and on which side:
 
-$SS = \frac{x - \mu}{\sigma}$
+$Z = \frac{x - \mu}{\sigma}$
 
 Note that SS tells precisely how many $\sigma$ units our sample is from the mean. Additionally, recall the empirical rule in that sense.
 
@@ -205,7 +205,7 @@ Nice interactive plotting example: [https://markkurzejaumich.shinyapps.io/bivari
 
 Quiz/assignment in which several graphs were shown and they needed to be described, highlighting the insights in them.
 
-### 4.7 Links and Modern Infrpgraphics
+### 4.7 Links and Modern Infographics
 
 Interesting links from [The New York Times: What's Going on in This Graph?](https://www.nytimes.com/column/whats-going-on-in-this-graph), which encourages discussions on graphs:
 - [Climate](https://www.nytimes.com/interactive/2018/05/03/learning/08WGOITGraphLN.html)
