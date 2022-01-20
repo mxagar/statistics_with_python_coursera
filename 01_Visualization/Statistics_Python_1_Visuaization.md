@@ -1,8 +1,8 @@
 # Statistics with Python: Understanding and Visualizing Data with Python
 
-My personal notes taken while following the Coursera Specialization ["Statistics with Python"](https://www.coursera.org/specializations/statistics-with-python), from the University of Michingan, hosted by Prof. Dr. Brenda Gunderson.
+My personal notes taken while following the Coursera Specialization ["Statistics with Python"](https://www.coursera.org/specializations/statistics-with-python), from the University of Michingan, hosted by Prof. Dr. Brenda Gunderson and colleagues.
 
-The Specialization is divided in three courses and each of one has a subfolder with the course notes.
+The Specialization is divided in three courses and each one has a subfolder with the course notes.
 
 1. [Understanding and Visualizing Data with Python](https://www.coursera.org/learn/understanding-visualization-data?specialization=statistics-with-python): `01_Visualization` 
 2. [Inferential Statistical Analysis with Python](https://www.coursera.org/learn/inferential-statistical-analysis-python?specialization=statistics-with-python): `02_Inference`
@@ -30,14 +30,14 @@ Overview of contents:
    - Python guidelines
       - Cheatseets: NUmpy, Pandas, Scipy, Matplotlib
       - Style guidelines (based on Google)
-4. What Can You Do with Univariate Data?
+4. What Can You Do with **Univariate** Data?
    - 4.1 Categorical Data: Tables, Bar Charts & Pie Charts
    - 4.2 Quantitative Data: Histograms
    - 4.3 Quantitative Data: Numerical Summaries = Quantiles
    - 4.4 Empirical Rule & Standard Score
    - 4.6 Commenting Graphs
    - 4.7 Links and Modern Infographics
-5. Python for Univariate Data Analysis: Two **very important** Notebooks:
+5. Python for **Univariate** Data Analysis: Two **very important** Notebooks:
    - `02_PythonLibraries.ipynb`
      - Numpy
      - Scipy
@@ -45,7 +45,11 @@ Overview of contents:
      - Seaborn
      - Extra Seaborn: Tables, Histograms, Boxplots
    - `03_CaseStudy_NHANES.ipynb`
-     - 
+     - Categorical Data: Frequency Tables
+     - Quantitative Variables: Numerical Summaries
+     - Graphical Summaries: Histograms & Boxplots
+     - Stratification
+     - Practice exercises: **Particularly the advanced stratifications with `groupby` are the most interesting**
 
 ## 1. What is Statistics?
 
@@ -276,6 +280,7 @@ url = "Cartwheeldata.csv"
 df = pd.read_csv(url)
 
 df.head()
+df.describe()
 df.columns
 df.dtypes
 
@@ -312,15 +317,239 @@ print(pd.notnull(da.DMDEDUC2).sum())
 ```python
 
 ## -- Numpy
+
+import numpy as np
+
+a = np.array([1,2,3])
+b = np.array([[1,2],[3,4]])
+b.shape
+print(b[0,0], b[0,1], b[1,1])
+
+d = np.zeros((2,3))
+e = np.ones((4,2))
+f = np.full((2,2), 9)
+g = np.random.random((3,3))
+
+h = np.array([[1,2,3,4,], [5,6,7,8], [9,10,11,12]])
+i = h[:2, 1:3]
+i[0,0] = 1738
+
+x = np.array([[1,2],[3,4]], dtype=np.float64)
+y = np.array([[5,6],[7,8]], dtype=np.float64)
+x+y
+x-y
+x*y
+x/y
+
+np.sqrt(x)
+np.mean(x)
+
+np.sum(x)
+np.sum(x, axis=1)
+
 ## -- Scipy
+
+from scipy import stats
+
+np.random.seed(282629734)
+
+v = stats.norm.rvs(size = 10)
+x = stats.t.rvs(10, size=1000)
+
+stats.norm.cdf(np.array([1,-1., 0, 1, 3, 4, -2, 6]))
+
 ## -- Matplotlib
+
+import matplotlib.pyplot as plt
+
+# One plot
+x = np.arange(0, 3 * np.pi, 0.1)
+y_sin = np.sin(x)
+y_cos = np.cos(x)
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+plt.xlabel('x axis label')
+plt.ylabel('y axis label')
+plt.title('Sine and Cosine')
+plt.legend(['Sine', 'Cosine'])
+plt.show() # add it if not Jupyter, but python script
+
+# Subplots
+x = np.arange(0, 3 * np.pi, 0.1)
+y_sin = np.sin(x)
+y_cos = np.cos(x)
+plt.subplot(2, 1, 1)
+plt.plot(x, y_sin)
+plt.title('Sine')
+plt.subplot(2, 1, 2)
+plt.plot(x, y_cos)
+plt.title('Cosine')
+plt.show()
+
 ## -- Seaborn
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+import pandas as pd
+
+url = "Cartwheeldata.csv"
+df = pd.read_csv(url)
+
+# Linear regression
+sns.lmplot(x='Wingspan', y='CWDistance', data=df)
+# Scatterplot with hue
+sns.lmplot(x='Wingspan', y='CWDistance', data=df,
+           fit_reg=False, # No regression line
+           hue='Gender')   # Color by evolution stage
+
+# Swarmplot
+sns.swarmplot(x="Gender", y="CWDistance", data=df)
+
+# Boxplots: several variables with data
+sns.boxplot(data=df.loc[:, ["Age", "Height", "Wingspan"]])
+sns.boxplot(data=df.loc[df['Gender'] == 'M', ["Age", "Height", "Wingspan"]])
+# Boxplots: one grouped variable with x & y
+sns.boxplot(x = df['Age'], y = df['Gender'])
+
+# Histograms
+sns.distplot(df.CWDistance)
+sns.histplot(df.CWDistance)
+
+# Countplot
+sns.countplot(x='Gender', data=df)
+
 ## -- Extra Seaborn: Tables, Histograms, Boxplots
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+tips_data = sns.load_dataset("tips")
+# total_bill: amount
+# tip: amount
+# time: lunch, dinner
+# smoker: yes, no
+
+# One Histogram
+p = sns.distplot(tips_data["total_bill"], kde = False)
+p.set_title("Histogram of Total Bill")
+
+# Two overlapping histograms
+sns.distplot(tips_data["tip"], kde = False).set_title("Tip & Bill")
+sns.distplot(tips_data["total_bill"], kde = False)
+plt.xlabel('Total bill and tip')
+plt.legend(['tip','total_bill'])
+plt.show()
+
+# Boxplot: One
+sns.boxplot(tips_data["total_bill"])
+
+# Boxplot: Two Overlapping
+sns.boxplot(tips_data["total_bill"])
+sns.boxplot(tips_data["tip"]).set_title("Bill & Tiü")
+plt.show()
+
+# Boxplot: grouping (y) of a variable (x)
+sns.boxplot(x = tips_data["tip"], y = tips_data["smoker"])
+
+# FacetGrid: create cells for the values of a categorical variable (time)
+# and plot a cursom plt type (hist) of a variable (time)
+g = sns.FacetGrid(tips_data, row = "time")
+g = g.map(plt.hist, "tip")
 
 ```
 
 ### 5.3 `03_CaseStudy_NHANES.ipynb`
 
+This is a **very important** notebook that should be read carefully.
+The [NHANES Dataset](https://wwwn.cdc.gov/nchs/nhanes/Default.aspx) is analayzed as a case study.
+The variable codenames can be found [here](https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.htm).
+
+Contents:
+
+1. Categorical Data: Frequency Tables
+2. Quantitative Variables: Numerical Summaries
+3. Graphical Summaries: Histograms & Boxplots
+4. Stratification
+5. Practice exercises: **Particularly the advanced stratifications with `groupby` are the most interesting**
+
+In the following, the most important commands are collected:
+
 ```python
+
+## -- 1. Categorical Data: Frequency Tables
+
+da.DMDEDUC2.value_counts()
+da.DMDEDUC2.value_counts().sum()
+pd.isnull(da.DMDEDUC2).sum()
+
+# Replace categorical variable values/levels with more human-readable categories
+da["RIAGENDRx"] = da.RIAGENDR.replace({1: "Male", 2: "Female"})
+
+# Consider NA values if necessary
+da["DMDEDUC2x"] = da.DMDEDUC2x.fillna("Missing")
+x = da.DMDEDUC2x.value_counts()
+# Percentage/Frequency
+x / x.sum()
+
+## -- 2. Quantitative Variables: Numerical Summaries
+
+# Note: use dropna() before applying any describe()
+da.BMXWT.dropna().describe()
+
+# People with hypertension? Apply logical operators
+a = (da.BPXSY1 >= 120) & (da.BPXSY2 <= 139)
+b = (da.BPXDI1 >= 80) & (da.BPXDI2 <= 89)
+print(np.mean(a | b))
+
+## -- 3. Graphical Summaries: Histograms & Boxplots
+
+# Histograms: watch out number of bins
+sns.histplot(da.BMXWT.dropna(),kde=True,stat='density')
+
+# Boxplots: data - several variables plotted
+bp = sns.boxplot(data=da.loc[:, ["BPXSY1", "BPXSY2", "BPXDI1", "BPXDI2"]])
+bp.set_ylabel("Blood pressure in mm/Hg")
+
+## -- 4. Stratification
+
+# Create age strata based on these cut points
+da["agegrp"] = pd.cut(da.RIDAGEYR, [18, 30, 40, 50, 60, 70, 80])
+da["agegrp"].value_counts()
+
+# Boxplots: x & y -- variable in groups plotted, great for stratified data
+# hue: additional grouping
+plt.figure(figsize=(12, 5))
+sns.boxplot(x="agegrp", y="BPXSY1", data=da)
+sns.boxplot(x="agegrp", y="BPXSY1", hue="RIAGENDRx", data=da)
+
+# Stratification for Categorical Variables
+da.groupby("agegrp")["DMDEDUC2x"].value_counts()s
+
+# Advanced stratifications for categorical variables
+dx = da.loc[~da.DMDEDUC2x.isin(["Don't know", "Missing"]), :] 
+dx = dx.groupby(["agegrp", "RIAGENDRx"])["DMDEDUC2x"]
+dx = dx.value_counts()
+dx = dx.unstack() # long vs wide
+dx = dx.apply(lambda x: x/x.sum(), axis=1)
+print(dx.to_string(float_format="%.3f"))
+
+## -- 5. Practice exercises
+
+# Advanced stratifications for categorical variables
+
+dx = da[(da['RIDAGEYR']>30) & (da['RIDAGEYR']<=40)]
+dx = dx.groupby(["RIAGENDRx","DMDEDUC2x"])["DMDHHSIZ"].median()
+dx
+
+dx = da.groupby(["SDMVSTRA","SDMVPSU","RIAGENDRx"])[["RIDAGEYR","BMXHT","BMXBMI"]].mean()
+dx
+
+dx1 = da.groupby(["SDMVSTRA","SDMVPSU","RIAGENDRx"])[["RIDAGEYR","BMXHT","BMXBMI"]].quantile(0.25)
+dx2 = da.groupby(["SDMVSTRA","SDMVPSU","RIAGENDRx"])[["RIDAGEYR","BMXHT","BMXBMI"]].quantile(0.75)
+
+dx=dx2-dx1
+dx
+
+dx.max()/dx.min()
 
 ```
