@@ -13,12 +13,39 @@ The present file is a guide or compilation of notes of the first course: **Under
 Mikel Sagardia, 2022.
 No warranties.
 
-Overview:
+Overview of contents:
+
 1. What is Statistics?
 2. What is Data?
-3. Python Intro + Jupyter Notebooks
+   - 2.1 Where Do Data Come From? Data Sources: Organic vs. Designed
+   - 2.2 Variable Types: Quantitative vs Categorical
+   - 2.3 Study Design Types
+   - 2.5 Power and Bias
+   - 2.6 Data Management and Manipulation
+3. Python Intro + Jupyter Notebooks: `./lab/01_DataManagement.ipynb`.
+   - Pandas DataFrames: Intro with the Cartwheel Dataset
+     - Selection
+     - Group By
+   - Pandas DataFrame - NHANES Dataset
+   - Python guidelines
+      - Cheatseets: NUmpy, Pandas, Scipy, Matplotlib
+      - Style guidelines (based on Google)
 4. What Can You Do with Univariate Data?
-5. Python for Univariate Data Analysis
+   - 4.1 Categorical Data: Tables, Bar Charts & Pie Charts
+   - 4.2 Quantitative Data: Histograms
+   - 4.3 Quantitative Data: Numerical Summaries = Quantiles
+   - 4.4 Empirical Rule & Standard Score
+   - 4.6 Commenting Graphs
+   - 4.7 Links and Modern Infographics
+5. Python for Univariate Data Analysis: Two **very important** Notebooks:
+   - `02_PythonLibraries.ipynb`
+     - Numpy
+     - Scipy
+     - Matplotlib
+     - Seaborn
+     - Extra Seaborn: Tables, Histograms, Boxplots
+   - `03_CaseStudy_NHANES.ipynb`
+     - 
 
 ## 1. What is Statistics?
 
@@ -32,7 +59,7 @@ Note that data can be missleading; statistics has tools to avoid missunderstandi
 
 The different perspectives of statistics:
 - summarizing
-- science ofuncertainty
+- science of uncertainty
 - science of decisions
 - science of variation
 - art of forecasting
@@ -44,7 +71,7 @@ Data science uses statistics, but introduces new technical disciplines, such as 
 
 ## 2. What is Data?
 
-Data can be represneted in numbers, images, words, audio.
+Data can be represented in numbers, images, words, audio.
 
 Some cool visualizations from [https://flowingdata.com](https://flowingdata.com):
 
@@ -52,7 +79,7 @@ Some cool visualizations from [https://flowingdata.com](https://flowingdata.com)
 - [A Day in the Life: Work and Home](https://flowingdata.com/2017/05/17/american-workday/)
 - [Most Common Use of Time, By Age and Sex](https://flowingdata.com/2015/11/30/most-common-use-of-time-by-age-and-sex/)
 
-### 2.1 Where Do Data Come From?
+### 2.1 Where Do Data Come From? Data Sources: Organic vs. Designed
 
 We distinguish two types of data:
 
@@ -78,7 +105,7 @@ In the case of not i.i.d data, we need to apply other statistical procedures.
 
 We need to consider where data comes from in order to decide which assumptions and tools to apply.
 
-### 2.2 Variable Types
+### 2.2 Variable Types: Quantitative vs Categorical
 
 - Quantitative variables:
   - continuous (height; also age is considered continuous)
@@ -87,7 +114,7 @@ We need to consider where data comes from in order to decide which assumptions a
   - ordinal: groups have ranking (role ranking: junior, senior, etc.)
   - nominal: groups have merely names (race)
 
-### 2.3 Study Design
+### 2.3 Study Design Types
 
 There are many types of study designs and sometimes it is hard to classify one study to belong to a type.
 
@@ -102,13 +129,13 @@ Some notions:
   - Observational studies treat the subjects in the same group and insights arise from observation; it is said that the subjects are exposed to conditions, whereas in experimental studies they are said to be assigned
   - Experimental studies are more structured and divide often subjects into groups for targeted experiments
 
-#### Power and Bias
+### 2.5 Power and Bias
 
 **Power analysis**: process to assess whether a given study design will lead to meaningful results.
 
 **Bias**: Measurements that are systematically off-target or sample is not representative of population of interest. Observational studies are specially vulnerable to it.
 
-### 2.4 Data Management and Manipulation
+### 2.6 Data Management and Manipulation
 
 The general shape and properties of a dataframe table is explained in a text: subject x variables.
 Nothing special to be noted here, except some terminology:
@@ -159,7 +186,7 @@ Whenever we can quantitative data (discrete: age, continuous: height), the **his
 s
 These four aspects are summarized in 1-2 sentences if the data distribution is described in text.
 
-### 4.3 Quantitative Data: Numerical Summaries = Quartiles
+### 4.3 Quantitative Data: Numerical Summaries = Quantiles
 
 Five summary values are given for a distribution, which are the **min and max values** and **the quartiles 25% (Q1), 50% (Q2 = median), 75% (Q3)**. 
 
@@ -192,6 +219,13 @@ Any distribution of quantitative data can be visualized with a box plot.
 A box plot is a graphical representation of the quartiles or the five-value summary: min, max, 25%, median, 50%, IQR.
 Additionally, if the whiskers are not set in the min/max locations, outliers can be detected.
 There is a technique for that.
+
+Note on the outliers and the length of the whiskers:
+
+- if no outliers plotted, whiskers are min and max
+- if outliers plotted, whiskers are largest/lowest points inside the range defined by 1st or 3rd quartile + 1.5*IQR 
+
+if there are no individual data points plotted, the whiskers indicate data’s minimum and maximum. If there are individual data points plotted, the whiskers indicate the largest/lowest points inside the range defined by 1st or 3rd quartile plus 1.5 times IQR.
 
 Most interesting box plots appear when we plot different groups together, i.e., when we facet the same quantitative variable of different qualitative variables (groups). For example:
 - Blood pressure by age ranges and gender.
@@ -227,13 +261,49 @@ This section consists on lab sessions condensed in the following notebooks:
 - `01_DataManagement.ipynb`
 - `02_PythonLibraries.ipynb`
 - `03_CaseStudy_NHANES.ipynb`
-- `04_Exercise_NHANES.ipynb`
 
 In the following, the most important commands/functions are summarized:
 
 ### 5.1 `01_DataManagement.ipynb`
 
 ```python
+import numpy as np
+import pandas as pd
+
+### Cartwheel
+
+url = "Cartwheeldata.csv"
+df = pd.read_csv(url)
+
+df.head()
+df.columns
+df.dtypes
+
+df.loc[:,"CWDistance"]
+df.loc[:,["CWDistance", "Height", "Wingspan"]]
+df.loc[:9, ["CWDistance", "Height", "Wingspan"]]
+df.loc[10:15]
+
+df.iloc[:4]
+df.iloc[1:5, 2:4]
+
+df.Gender.unique()
+
+df.groupby(['Gender','GenderGroup']).size()
+df.groupby(['Gender','GenderGroup']).sum()
+
+### NHANES
+
+url = "nhanes_2015_2016.csv"
+da = pd.read_csv(url)
+
+w = da["DMDEDUC2"]
+x = da.loc[:, "DMDEDUC2"]
+y = da.DMDEDUC2
+z = da.iloc[:, 9]
+
+print(pd.isnull(da.DMDEDUC2).sum())
+print(pd.notnull(da.DMDEDUC2).sum())
 
 ```
 
@@ -241,15 +311,15 @@ In the following, the most important commands/functions are summarized:
 
 ```python
 
+## -- Numpy
+## -- Scipy
+## -- Matplotlib
+## -- Seaborn
+## -- Extra Seaborn: Tables, Histograms, Boxplots
+
 ```
 
 ### 5.3 `03_CaseStudy_NHANES.ipynb`
-
-```python
-
-```
-
-### 5.4 `04_Exercise_NHANES.ipynb`
 
 ```python
 
