@@ -50,6 +50,8 @@ Overview of contents:
      - Graphical Summaries: Histograms & Boxplots
      - Stratification
      - Practice exercises: **Particularly the advanced stratifications with `groupby` are the most interesting**
+6. What Can You Do with **Multivariate** Data?
+7. Python for **Multivariate** Data Analysis
 
 ## 1. What is Statistics?
 
@@ -553,3 +555,85 @@ dx
 dx.max()/dx.min()
 
 ```
+
+## 6. What Can You Do with **Multivariate** Data?
+
+A data set is multivariate when we **measure more than one thing** for each sample.
+
+When we have multivariate data, instead of analyzing each variable separately, **we are interested in the relationships or associations between them!**
+
+These associations are often analyzed or plotted by pairs of variables.
+
+### 6.1 Multivariate Categorical Data: Associations
+
+Example of a multivariate categorical dataset: samples that contain data on: `gender`, `education level`, `marital status`, `age group`.
+It is multivariate because we measure more than one thing!
+
+Now, our research question that analyzes an association: What factors influence the highest education level?
+
+For that purpose, we can build table in which we compute the counts and frequencies of each education level (rows) against the levels of the other categorical variables one by one:
+
+![Two-way table for education and gender](./pics/two_way_education_gender.png)
+
+We can also plot a side-by-side **bar chart** (better percentages within a group than counts):
+
+![Side-by-side bar chart for education and gender](./pics/bar_chart_education_gender.png)
+
+Similar charts/plots
+- Stacked bar charts: stacked on top of each instead of side-by-side
+- Mosaic plots: areas proportional to population percentages
+
+### 6.2 Multivariate Quatitative Data: Associations
+
+Example of a multivariate quantitative dataset: samples that contain data on: `body mass index`, `blood pressure`, `cholesterol level`, `age`.
+It is multivariate because we measure more than one thing!
+
+Instead of plotting the histogram of each variable independently, we plot a **scatteplot** for pairs of variables.
+
+In a scatter plot we can further see associations:
+- Type:
+  - Linear
+  - Quadratic
+  - No association
+- Direction (slope): sign of the Pearson correlation $R \in [-1,1]$
+  - Positive (increases)
+  - Negative (decreases)
+- Strength: value of the Pearson correlation $R \in [-1,1]$
+  - Weak: widde spread
+  - Moderate: smaller spread
+  - String: narrow spread
+
+Notes:
+- A high Pearson correlation $R \in [-1,1]$ value does not imply causation. The might be another variable associated to the analyzed pair which is causing their behavior.
+- We might want to display relevant groups (categirical data) in the scatterplots to get further insights; for instance `age` vs `blood pressure` and points colored according to `gender`.
+
+![Scatterplot between two quantitative variables](./pics/scatteplot.png)
+
+Tool for online plotting of bivariate continuous data:
+
+[Scatterplot examples](https://markkurzejaumich.shinyapps.io/bivariate_analysis/)
+
+### 6.3 Simpon's Paradox
+
+[Simpson's Paradox](https://en.wikipedia.org/wiki/Simpson%27s_paradox): Pitfall in statistics "in which a trend appears in several groups of data but disappears or reverses when the groups are combined. This result is often encountered in **social-science and medical-science** statistics, and is particularly problematic when frequency data is unduly given causal interpretations. The paradox **can be resolved when confounding variables and causal relations are appropriately addressed** in the statistical modeling." (Wikipedia).
+
+In other words, **a trend for your total data is different then the trend for the same data devided by groups**.
+
+Image of the Simpson's paradox, from the Wikipedia:
+
+![Simpon's Paradox (from the Wikipedia)](./pics/simpson_paradox.png)
+
+See examples in Wikipedia:
+- UC Berkley admissions, gender bias?
+- Kidney stone treatment: one tratment seemed to be better than the other, but when cases separated into stone size, the other treatment had better success rations within each group.
+
+I think that the kidney stone tratment is a good example. Within group ratios, one treatment seems to be better, but looking at the overall without group classification, the other treatment is. It seems to me that **when the sizes of the groups are quite different, the risk of having such reverse effects arises or becomes higher**.
+
+### 6.4 Interesting Links/Examples of Data Visualization
+
+- [Selfies](http://selfiecity.net/selfiexploratory/)
+- [Income Inequality](https://ourworldindata.org/income-inequality)
+- [Marrying age](https://flowingdata.com/2016/03/03/marrying-age/)
+- [City rankings: Profit, Social, Environment](https://www.nationalgeographic.com/environment/graphics/sustainable-cities-graphic-urban-expeditions)
+
+## 7. Python for **Multivariate** Data Analysis
