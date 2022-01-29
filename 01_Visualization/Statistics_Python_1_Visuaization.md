@@ -51,6 +51,11 @@ Overview of contents:
      - Stratification
      - Practice exercises: **Particularly the advanced stratifications with `groupby` are the most interesting**
 6. What Can You Do with **Multivariate** Data?
+   - 6.1 Multivariate Categorical Data: Associations
+   - 6.2 Multivariate Quatitative Data: Associations
+   - 6.3 Simpon's Paradox
+   - 6.4 Interesting Links/Examples of Data Visualization
+   - 6.5 Pizza Study Design Memo: Exercise / Assignment (Peer-Evaluated)
 7. Python for **Multivariate** Data Analysis
 
 ## 1. What is Statistics?
@@ -636,4 +641,73 @@ I think that the kidney stone tratment is a good example. Within group ratios, o
 - [Marrying age](https://flowingdata.com/2016/03/03/marrying-age/)
 - [City rankings: Profit, Social, Environment](https://www.nationalgeographic.com/environment/graphics/sustainable-cities-graphic-urban-expeditions)
 
+### 6.5 Pizza Study Design Memo: Exercise / Assignment (Peer-Evaluated)
+
+Write Memorandum to small Pizza company CEO on a study design in which properties of their pizzas will be collected and contrasted against their main big competitor. Then, the study is published in marketing campaign. 300-500 words.
+
+- Describe how to conduct study / collect data.
+- Focus on 1-2 strengths: amount of toppings, speed of service, customer satisfaction.
+- Include research questions + variables to be analyzed.
+- How would data be summarized? Numerically and graphically.
+- CEO has basic statistic literacy (peers).
+- [Sample memorandum](https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing/memos/sample_memo.html)
+#### Memorandum Text (Submitted)
+
+This document summarizes a study design which aims to compare our company (Small Pizza) with our biggest competitor, Big Pizza. The goal is to conduct the research and present the most important insights in a marketing campaign.
+
+In the following, these aspects are covered:
+- Study design: how will we collect the data?
+- Research questions: which characteristics would we like to contrast and which variables are we going to collect for that purpose?
+- Presentation proposals: how will the data be summarized and portrayed for the most impactful effects on the target audience?
+
+**STUDY DESIGN**
+
+The survey will be conducted on the first 3 Fridays and Saturdays of February, from 4 PM to 10 PM (6 days altogether). That time frame is the one with most visits in our restaurants, as well as with the most varied customer segments. That will guarantee independent and identically distributed data.
+
+There will be an employee at the entrance/exit of each restaurant requesting customers to participate in a brief anonimous questionnaire (no more than 3 minutes). As a bonus, each participant will receive a lottery ticket for 10 pizzas at Small Pizza.
+
+The design of the questionnaire will be
+- confirmatory: the hypotheses built from our employee insights will be tested (see next section);
+- constrastive: we will focus on our restaurant, but customers will be asked to evaluate our competitors, too;
+- observational: customers should be picked randomly during the survey, but stratification or grouping should be tested during the exploratory analysis (i.e., insights according to customer background, such as age and gender).
+
+**RESEARCH QUESTIONS**
+
+In past exploratory studies our direct client service employees have collected the feedback of our customers. We will focus on three key observations that have appeared frequently:
+- Our pizza dough is the most authetic our customers have tasted: thin and crispy.
+- Our employees are very friedly.
+
+These remarks are aligned with the soul and mission of Small Pizza: we are a family-run chain of pizza restaurants which aims to bring real Italian pizzas to our customers, making them have a great time in a friendly atmosphere -- as in the Toscana.
+
+Questionnaire:
+1. General backgroud: 1.1 Gender (M/F/D), 1.2 Age Range (10s, 20s, ...), 1.3 Number of clients
+2. How often do you eat pizza every month?
+3. For the following aspects related to eating pizza: Dough, Toppings, Variety of options, Friendly and helpful service, Fast service
+  3.1 Which are the 2 most importantones for you? 
+	3.2 Evaluate if we are one of the bests or the bests in each aspect (Not at all, No, Not sure, Yes, Yes definitely)
+	3.2 Evaluate if our competitor(s) are/is one of the bests or the bests in each aspect (Not at all, No, Not sure, Yes, Yes definitely)
+
+**PRESENTATION PROPOSALS**
+
+An exploratory analysis will be performed with and without stratification or grouping (according to gender and age). Since most of the variables are categorical, the data presentation will consist in summary tables (with absolute and frequency values) as well as bar charts; the levels will be ordered, since we have ordinal variables.
+
+The two most important insights (from question 3.1) aligned with our essence and mission will be chosen and presented in contrast to our competitors. A possible marketing pitch could be built following this scheme:
+
+*We show the bar chart with frequencies from question 3.1 (important pizza aspects) and add the text/audio:*
+
+*"The two most important characteristic our customers value in a pizza service are A and B. X% of our customers think we are one of the best in achieving them, if not the best, whereas our competitor(s)... "*
+
+However, the concrete content and formulation is to be decided after looking at the data.
+
 ## 7. Python for **Multivariate** Data Analysis
+
+`04_Multivariate_Data_Selection.ipynb`
+
+`05_Multivariate_Distributions.ipynb`
+
+`06_Unit_Testing.ipynb`
+
+`07_Multivariate_Analysis_NHANES_Dataset.ipynb`
+
+`08_Assingment_Cartwheel_Dataset.ipynb`
+
