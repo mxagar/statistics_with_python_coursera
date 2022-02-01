@@ -60,9 +60,18 @@ Overview of contents:
    - `04_Multivariate_Data_Selection.ipynb`
    - `05_Multivariate_Distributions.ipynb`
    - `06_Unit_Testing.ipynb`
-   - `07_Multivariate_Analysis_NHANES_Dataset.ipynb`
+   - `07_Multivariate_Analysis_NHANES_Dataset.ipynb`: **very important summary on multivariate data analysis**
+     - Imports and Dataset Loading
+     - Bivariate Plotting: Scatterplots & Co.
+     - Stratification: Plot Quantitative Variables Grouped in Category Levels
+     - Categorical Bivariate Data: Tables with Category Levels
+     - Mixed Categorical and Quantitative Data: Boxplots
+     - Exercises: Application of Previous Sections to New Variables
    - `08_Assingment_Cartwheel_Dataset.ipynb`
-
+8. Populations and Samples
+9. Probability Samples abd Sampling Distributions
+10. Inference in Practice
+11. Python for **Sampling Distrubutions**
 
 ## 1. What is Statistics?
 
@@ -1062,3 +1071,6 @@ x = pd.crosstab(db.RIDRETH1, db.HIQ210)
 x.apply(lambda z: z/z.sum(), axis=1) # axis = 1: apply to rows
 
 ```
+
+## 8. Populations and Samples
+
