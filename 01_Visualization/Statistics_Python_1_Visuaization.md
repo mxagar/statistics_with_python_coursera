@@ -53,10 +53,16 @@ Overview of contents:
 6. What Can You Do with **Multivariate** Data?
    - 6.1 Multivariate Categorical Data: Associations
    - 6.2 Multivariate Quatitative Data: Associations
-   - 6.3 Simpon's Paradox
+   - 6.3 Simpson's Paradox
    - 6.4 Interesting Links/Examples of Data Visualization
    - 6.5 Pizza Study Design Memo: Exercise / Assignment (Peer-Evaluated)
 7. Python for **Multivariate** Data Analysis
+   - `04_Multivariate_Data_Selection.ipynb`
+   - `05_Multivariate_Distributions.ipynb`
+   - `06_Unit_Testing.ipynb`
+   - `07_Multivariate_Analysis_NHANES_Dataset.ipynb`
+   - `08_Assingment_Cartwheel_Dataset.ipynb`
+
 
 ## 1. What is Statistics?
 
@@ -604,7 +610,7 @@ In a scatter plot we can further see associations:
   - Positive (increases)
   - Negative (decreases)
 - Strength: value of the Pearson correlation $R \in [-1,1]$
-  - Weak: widde spread
+  - Weak: wide spread
   - Moderate: smaller spread
   - String: narrow spread
 
@@ -701,13 +707,358 @@ However, the concrete content and formulation is to be decided after looking at 
 
 ## 7. Python for **Multivariate** Data Analysis
 
-`04_Multivariate_Data_Selection.ipynb`
+The following notebooks work different aspects of mutivariate data analysis:
 
-`05_Multivariate_Distributions.ipynb`
+- `04_Multivariate_Data_Selection.ipynb`: selection, slicing, conditional selection.
+- `05_Multivariate_Distributions.ipynb`: bivariate scatterplots give information missing in isolated historgrams; example plot.
+- `06_Unit_Testing.ipynb`: Unit testing consists in performing checks on pieces of our code (e.g., functions, class methods, etc.) to see whether they return expected values given some inputs. The notebook from the course does not show a good example of that. Instead, my personal usage notes were added here, based on an example.
+- `07_Multivariate_Analysis_NHANES_Dataset.ipynb`: This notebook is **very important since it summarizes the most important analysis we can perform with multivariate data.**
+- `08_Assingment_Cartwheel_Dataset.ipynb`: This notebook is the assignment of week 3, related to multivariate data analysis; scatteplots and bar charts.
 
-`06_Unit_Testing.ipynb`
+In the following, the summary code of the two most important lab notebooks is listed.
 
-`07_Multivariate_Analysis_NHANES_Dataset.ipynb`
+- `04_Multivariate_Data_Selection.ipynb`
+- `07_Multivariate_Analysis_NHANES_Dataset.ipynb`
 
-`08_Assingment_Cartwheel_Dataset.ipynb`
+### `04_Multivariate_Data_Selection.ipynb`
 
+This notebook deals with the topic of selecting multiple variables in `pandas` dataframes.
+
+Basically, three major ways are used:
+
+- `df['ColName']`
+    - A view of the entire column is obtained
+    - We cannot change sliced row values, unless we change the entire column
+    - Equivalent to `df.ColName`
+- `df.loc['a':'b','ColName']`
+    - Locations are accessed through labels or **booleans**: rows, columns
+    - No index numbers, but **labels** or **booleans**!
+    - Specific cells can be changed
+    - We can use it for changing sliced row values
+- `df.iloc[1:5,3:7]`
+    - Same as `loc`, but we use **index numbers** or **booleans** instead of labels
+    - We can used to change sliced row values
+    
+Overview of contents:
+1. Column Selection
+2. Slicing
+3. Selection by Conditions
+4. Common Errors
+
+```python
+## -- 1. Column Selection
+
+import numpy as np
+import pandas as pd
+
+# If we want to show ALL (100) columns
+pd.set_option('display.max_columns', 100)
+df = pd.read_csv("nhanes_2015_2016.csv")
+
+# Get column names
+col_names = df.columns
+
+# Define col names to keep manually
+keep = ['BMXWT', 'BMXHT', 'BMXBMI', 'BMXLEG', 'BMXARML', 'BMXARMC',
+       'BMXWAIST']
+
+# Define col names to keep with a list comprehension
+keep = [column for column in col_names if 'BMX' in column]
+
+df[keep].head()
+
+## -- 2. Slicing
+
+# All rows, keep cols
+df.loc[:, keep].head()
+
+# Which column (names) are in keep?
+index_bool = np.isin(df.columns, keep)
+
+# Indexing with booleans
+df.iloc[:,index_bool].head()
+
+## -- 3. Selection by Conditions
+
+# df with all columns in keep: BMX*
+df_BMX = df[keep]
+
+waist_median = pd.Series.median(df_BMX['BMXWAIST'])
+
+df_BMX[df_BMX['BMXWAIST'] > waist_median].head()
+
+# df[]
+# We specify the conditions of the ROW cell values we want to select
+# Several conditions can be chained with
+# & or |
+condition1 = df_BMX['BMXWAIST'] > waist_median
+condition2 = df_BMX['BMXLEG'] < 32
+df_BMX[condition1 & condition2].head()
+
+# df.loc[]
+# ROWs to keep have been specified
+df_BMX.loc[condition1 & condition2, :].head()
+
+# Create a new df with only 5 rows (default output of head())
+tmp = df_BMX.loc[condition1 & condition2, :].head()
+# Change index
+tmp.index = ['a', 'b', 'c', 'd', 'e']
+
+# Specific loc[] row selection
+tmp.loc[['a', 'b'],'BMXLEG']
+
+# Specific iloc[] row selection
+tmp.iloc[[0, 1],3]
+
+
+## -- 4. Common Errors
+
+# Error 1: `df[]` can access only to column names/labels
+    
+    # Wrong
+    tmp[:, 'BMXBMI']
+    # Correct
+    tmp.loc[:, 'BMXBMI']
+    tmp.loc[:, 'BMXBMI'].values
+    
+# Error 2: `df.iloc[]` can access only to row & column index numbers + booleans
+    
+    # Wrong
+    tmp.iloc[:, 'BMXBMI']
+    # Correct
+    tmp.iloc[:, 1]
+    
+# Error 3: `df.loc[]` can access only to row & column labels/names + booleans
+    
+    # Wrong
+    tmp.loc[:, 2]
+    # Correct
+    tmp.iloc[:, 2]
+    
+# Error 4: `df[]` can be used for changing entire column values, but `df.loc[]` or `df.iloc[]` should be used for changing sliced row values
+
+    # Correct
+    tmp = df[['BMXBMI', 'BMXLEG']]
+    tmp['BMXBMI'] = range(5)
+    
+    # Wrong: values a set to a copy of tmp
+    tmp[tmp.BMXBMI > 2]['BMXBMI'] = [10]*2 
+    # Correct: values are set to tmp
+    tmp.loc[tmp.BMXBMI > 2, 'BMXBMI']  = [10]*2
+
+```
+
+### `07_Multivariate_Analysis_NHANES_Dataset.ipynb`
+
+This notebook is very important since it summarizes the most important analysis we can perform with multivariate data. The overview provides a good compendium of methods.
+
+Overvie of contents:
+1. Imports and Dataset Loading
+2. Bivariate Plotting: Scatterplots & Co.
+   - Regplot: scatterplot with additional regression information by default
+   - Jointplots with histograms and density estimation plots (kde). **Important note: single isolated variable distributions DO NOT DEFINE THE JOINT DISTRIBUTION.**
+   - Pearson correlation R. **Important note: correlation does not mean causation: having a long arm is not the cause of having a long leg.**
+1. Stratification: Plot Quantitative Variables Grouped in Category Levels
+2. Categorical Bivariate Data: Tables with Category Levels
+3. Mixed Categorical and Quantitative Data: Boxplots
+4. Exercises: Application of Previous Sections to New Variables
+
+```python
+
+## -- 1. Imports and Dataset Loading
+
+%matplotlib inline
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+from scipy import stats
+
+da = pd.read_csv("nhanes_2015_2016.csv")
+
+## -- 2. Bivariate Plotting: Scatterplots & Co.
+
+# BMXLEG: leg length
+# BMXARML: arm length
+# We see the relationship between both: people with longer legs tend to have longer arms
+# Whenever we have many samples, it makes sense using alpha for transparent points
+sns.regplot(x="BMXLEG",
+            y="BMXARML",
+            data=da,
+            fit_reg=False,
+            scatter_kws={"alpha": 0.2})
+
+# Same variables as before: leg length and arm length
+# Pearson correlation R quantifies the degree of relationship
+# With a jointplot we see histogram distributions + scatterplot/2D distribution
+# Note that single isolated variable distributions DO NOT DEFINE THE JOINT DISTRIBUTION!
+sns.jointplot(x="BMXLEG",
+              y="BMXARML",
+              kind='kde', data=da)
+df = da[["BMXLEG","BMXARML"]].dropna()
+df.columns = ['x','y']
+print(stats.pearsonr(df['x'],df['y']))
+
+# Variables: BPXSY1, BPXDI1 (systolic and istolic blood pressure measurements)
+# Low correlation
+sns.jointplot(x="BPXSY1",
+              y="BPXDI1",
+              kind='kde', data=da)
+df = da[["BPXSY1","BPXDI1"]].dropna()
+df.columns = ['x','y']
+print(stats.pearsonr(df['x'],df['y']))
+
+# Variables: BPXSY1, BPXSY2 (1st and 2nd systolic blood pressure measurement)
+sns.jointplot(x="BPXSY1",
+              y="BPXSY2",
+              kind='kde', data=da)
+df = da[["BPXSY1","BPXSY2"]].dropna()
+df.columns = ['x','y']
+print(stats.pearsonr(df['x'],df['y']))
+
+## -- 3. Stratification: Plot Quantitative Variables Grouped in Category Levels
+
+# Always try grouping variables according to their natural clusters (categorical variables) to see whether the relationships change.
+# In our case grouping is applied to gender and ethncity.
+
+# There seems to be a stringer correlation in arm & leg length among males
+da["RIAGENDRx"] = da.RIAGENDR.replace({1: "Male", 2: "Female"}) 
+sns.FacetGrid(da, col="RIAGENDRx").map(plt.scatter, "BMXLEG", "BMXARML", alpha=0.4).add_legend()
+
+print(da.loc[da.RIAGENDRx=="Female", ["BMXLEG", "BMXARML"]].dropna().corr())
+print(da.loc[da.RIAGENDRx=="Male", ["BMXLEG", "BMXARML"]].dropna().corr())
+
+# Scatter plots with 2 categorical variables used to stratify: gender & ethnicity
+# Note that ethnicity 5 (multiracial) seems to have higher correlation
+# This is usual in groups with large heterogeneity: correlations emerge
+# that are indiscernible in more homogenous data
+_ = sns.FacetGrid(data=da,
+                  col="RIDRETH1", 
+                  row="RIAGENDRx").map(plt.scatter,
+                                       "BMXLEG",
+                                       "BMXARML",
+                                       alpha=0.5).add_legend()
+
+
+## -- 4. Categorical Bivariate Data: Tables with Category Levels
+
+# Marital status and education level
+da["DMDEDUC2x"] = da.DMDEDUC2.replace({1: "<9",
+                                       2: "9-11",
+                                       3: "HS/GED",
+                                       4: "Some college/AA",
+                                       5: "College", 
+                                       7: "Refused",
+                                       9: "Don't know"})
+da["DMDMARTLx"] = da.DMDMARTL.replace({1: "Married",
+                                       2: "Widowed",
+                                       3: "Divorced",
+                                       4: "Separated",
+                                       5: "Never married",
+                                       6: "Living w/partner",
+                                       77: "Refused"})
+# Remove samples that can confuse us
+db = da.loc[(da.DMDEDUC2x != "Don't know") & (da.DMDMARTLx != "Refused"), :]
+
+# Cross Table / Contingency Table: Count samples that belong to each category level pair
+# VERY INTERESTING!
+x = pd.crosstab(db.DMDEDUC2x, da.DMDMARTLx)
+# Normalize: get percetanges
+# Watch out: select to normalize in column/row with axis
+# The most common (modal) marital status is married
+# For college graduates, the proportion of marries is the highest across all education levels
+x.apply(lambda z: z/z.sum(), axis=1) # axis = 1: apply to rows
+
+# The following line does these steps, reading the code from left to right:
+# 1 Group the data by every combination of gender, education, and marital status
+# 2 Count the number of people in each cell using the 'size' method
+# 3 Pivot the marital status results into the columns (using unstack)
+# 4 Fill any empty cells with 0
+# 5 Normalize the data by row
+g = db.groupby(["RIAGENDRx", "DMDEDUC2x", "DMDMARTLx"])
+g.size().unstack().fillna(0).apply(lambda x: x/x.sum(), axis=1)
+
+# Stratifiable data should be grouped and displayed in tables and plots
+# to for hypothesis of phenomena that are occurring.
+# Here we see that the rate of married college educate women decreases from 40 to 60
+# whereas it increases if they have only high school degrees
+# Conclusion: marital status, gender, age, education: all have strong interactions
+dx = db.loc[(db.RIDAGEYR >= 40) & (db.RIDAGEYR < 50)]
+a = dx.groupby(["RIAGENDRx", "DMDEDUC2x", "DMDMARTLx"]).size().unstack().fillna(0).apply(lambda x: x/x.sum(), axis=1)
+
+dx = db.loc[(db.RIDAGEYR >= 50) & (db.RIDAGEYR < 60)]
+b = dx.groupby(["RIAGENDRx", "DMDEDUC2x", "DMDMARTLx"]).size().unstack().fillna(0).apply(lambda x: x/x.sum(), axis=1)
+
+print(a.loc[:, ["Married"]].unstack())
+print("")
+print(b.loc[:, ["Married"]].unstack())
+
+## -- 5. Mixed Categorical and Quantitative Data: Boxplots
+
+# Boxplot
+# Age distribution depending on marital status
+plt.figure(figsize=(12, 4))
+a = sns.boxplot(x="DMDMARTLx", y="RIDAGEYR", data=db)
+
+# Violin plot: a boxplot with additional distribution information
+# however, it makes sense to use it when we have many samples
+plt.figure(figsize=(12, 4))
+a = sns.violinplot(x="DMDMARTLx", y="RIDAGEYR", data=db)
+
+## -- 6. Exercises: Application of Previous Sections to New Variables
+
+# Scatterplot between first & second blood pressure distolic measurements
+sns.regplot(data=da,
+            x="BPXDI1",
+            y="BPXDI2",
+            fit_reg=False,
+            scatter_kws={"alpha": 0.2})
+
+# Correlation between first & second blood pressure distolic & systolic measurements
+da[["BPXDI1","BPXDI2","BPXSY1","BPXSY2"]].corr()
+
+# How any ethnicity groups do we have?
+da["RIDRETH1"].unique()
+
+# Scatterplots between the first systolic and the first diastolic blood pressure
+# Stratify the plots by gender (rows) and by race/ethnicity groups (columns)
+da["RIAGENDRx"] = da.RIAGENDR.replace({1: "Male", 2: "Female"})
+_ = sns.FacetGrid(data=da,
+                  col="RIDRETH1", 
+                  row="RIAGENDRx").map(plt.scatter,
+                                       "BPXSY1",
+                                       "BPXDI1",
+                                       alpha=0.5).add_legend()
+
+# Make education level status human readable and remove confusing levels
+da["DMDEDUC2x"] = da.DMDEDUC2.replace({1: "<9",
+                                       2: "9-11",
+                                       3: "HS/GED",
+                                       4: "Some college/AA",
+                                       5: "College", 
+                                       7: "Refused",
+                                       9: "Don't know"})
+db = da.loc[(da.DMDEDUC2x != "Don't know"), :]
+
+# Violin plots: distributions of ages within groups defined by gender and education level
+plt.figure(figsize=(12, 4))
+a = sns.violinplot(x="DMDEDUC2x", y="RIDAGEYR", data=db, hue="RIAGENDRx")
+
+# Violin plots: distributions of BMI by of 10-year age bands and gender
+db["agegrp"] = pd.cut(db.RIDAGEYR, [18, 30, 40, 50, 60, 70, 80])
+plt.figure(figsize=(12, 4))
+a = sns.violinplot(x="agegrp", y="BMXBMI", data=db, hue="RIAGENDRx")
+
+# Frequency table for the joint distribution of ethnicity groups (RIDRETH1)
+# and health-insurance status (HIQ210).
+# HIQ210:
+# 1: Yes, 2: No, 7: Refused, 9: Don't know, .: Missing
+# Normalize the results so that the values within each ethnic group
+db["HIQ210"] = db.HIQ210.replace({1: "Yes",
+                                  2: "No",
+                                  7: "Refused",
+                                  9: "Don't know"})
+x = pd.crosstab(db.RIDRETH1, db.HIQ210)
+x.apply(lambda z: z/z.sum(), axis=1) # axis = 1: apply to rows
+
+```
