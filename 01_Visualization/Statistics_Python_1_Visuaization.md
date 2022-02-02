@@ -1149,12 +1149,57 @@ The probability of selection of a unit is determined by
 
 The probability of selection is a factor used during the population estimate computation!
 
-Note that within a cluster, units might be assigned to subgroups that have different probabilities of selection! For instance, we might wnat to have a higher rate of certain socio-economic groups in given clusters/counties.
+Note that within a cluster, units might be assigned to subgroups that have different probabilities of selection! For instance, we might want to have a higher rate of certain socio-economic groups in given clusters/counties.
 
 Designing sampling strategies for large populations is much more cost effective using complex probability sampling than SRS (simple randdom sampling). In the case of NHANES, a trailer is sent to the selected counties. That is much more efficient that having trailers travel around randomly.
 
 ### 8.3 Non-Probability Sampling
 
 Properties:
-- Probabilities of selection of units cannot be determined
-- 
+- Probabilities of selection of units cannot be determined a priori
+  - Thus, we cannot make inferences of the larger population
+- There is no random selection of units
+  - We have a string risk of bias
+  - Non representative samples are often taken
+- Grouping can be done (strata, clusters), but groups ar enot randomly selected
+- Very cheap compared to probability sampling
+
+Examples:
+- Studies of volunteers (e.g., clinical trials)
+- Opt-in web surveys (e.g., on social media)
+- Snowball sampling: sampling grows virally because friends recruit friends
+- Convenience samples: students selected by prof.
+- Quota samples: we try to recruit a target size no matter what
+
+Big Data analysis relies on convinience data obtained from a non-representative sampling. Therefore, we must be very careful as to which conclusions/statements we do with our analysis -- because in general, we cannot make inferences of the larger population!
+
+So what can we do? There are two possible approaches to make statements:
+
+1. Pseudo-Randomization
+2. Calibration
+
+#### 8.3.1 Pseudo-Randomization
+
+We have our dataset with non-probability sampling.
+We find a similar dataset but with a probability sampling: both need to have similar features/measurements, or at least an overlapping set.
+A logistic regression model is trained with both datasets using all the features we have available for the units: the model predicts the probability of a sample to belong to the non-probablity sampling (y = 1).
+Then, the logistic regression is applied to the non-probability dataset to see if we select the samples or not.
+
+In understand that the ones with a high probability of belonging to the probability sample are taken. Then, methods from probability samplings are applied, as if we knew the probability of selection.
+
+The videos explain very poorly how that works in practice, only high level explanations are given using confusing and repetitive terms and their contraries.
+
+#### 8.3.2 Calibration
+
+Weights are used on units to mirror a distribution of a known population.
+For that we need to select some features/variables from which know the population distributions.
+
+Example:
+- Non-probaility sample: 70% Female, 30% Male
+- Probability sample: 50%, 50%
+- Calibration: down-weight F, up-weight M
+
+However, if the weighting factor/variable is not related to the vairable of interest, we will not reduce the sampling bias. For instance: we adjust for gender but the ultimate variable of interest is salary, which probably depends more in the country of origin.
+
+#### Example: Twitter
+
