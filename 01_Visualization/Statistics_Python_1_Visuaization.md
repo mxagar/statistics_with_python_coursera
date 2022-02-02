@@ -1074,3 +1074,87 @@ x.apply(lambda z: z/z.sum(), axis=1) # axis = 1: apply to rows
 
 ## 8. Populations and Samples
 
+### 8.1 Sampling from Well-Defined Populations
+
+Before modern statistics, **census** methods were applied to measure populations, i.e., every unit was measured to make statements about the population. [Jerzy Neyman](https://en.wikipedia.org/wiki/Jerzy_Neyman) introduced the concept of randomly sampling a population and still be able to make statements of the population.
+
+First, we need to very very concretely define the **target population**:
+
+- Who? Anything we think might be relevant: Gender, ethnicity, age, etc.
+- What time frame? Summer, winter, etc.
+- Where? USA, EU, Spain, etc.
+
+How can we make inferential statements about that population?
+
+- Option 1: census = every single person from the population measured
+  - Expensive for large populations, thu done only with small ones
+- Option 2: **scientific probability sample** = samples from the population measured
+  - Create a sampling frame: list of all units in the population
+  - Determine probability of selection for every unit
+  - Select units from list at random with sampling rates for different subgroups determined by probabilities of selection
+  - Measure randomly seleted units
+  - Example: From a classroom roster of 10 males and 20 females, a professor wishes to select a probability sample of 5 males and 5 females: probabilities of selection for males and females are 1/2 and 1/4.
+- Option 3: non-probability sample = also with samples
+  - No random selection performed
+  - Probabilities of selection cannot be determined
+  - Examples: web surveys (volunteers take part, we don't have a complete list), snowball sampling (friends recruit frieds over social media), convinient sampling (collect data from coworkers).
+  - Obviously, population inferences are more difficult here, we have a high potential for bias (e.g., we recruit very specific type of people, etc.)
+
+**Option 2: Scientific probability sample**: we should take that sampling because it has a very important property: Known propabilities of selection allow us to make unbiased statemets about both
+
+- (1) population features
+- and the (2) uncertainty in survey estimates.
+
+All in all, we get a **representative, realistic, random** sampling with which we can infer the properties of the population.
+
+### 8.2 Probability Sampling (Option 1)
+
+Two major methods for probability sampling are used:
+
+1. Simple Random Sampling (SRS): `n` units are selected from a total population of `N`, having each unit a probability of seletion of `n/N`
+2. Complex Probabiity Sampling: the population is hierarchically grouped (states, counties, etc.) and each level is sampled. The final units might have different probabilities of selection depending on their properties (e.g., socio-economic status).
+
+The first (SRS) is used only with small populations in practice, because for large populations is logistacally expensive. The second is the common method for large studies.
+
+#### 8.2.1 Simple Random Sampling (SRS): `n/N`
+
+We have `N` population units and **randomly** select `n` units from the list.
+Each unit has an equal probability of selection `n/N`.
+Estimates of means, proportions, etc. are **unbiased** = equal to the population values on average!
+
+Some properties of SRS:
+- We can do it with or without replacement: with replacement means a unit can be selected several times; however, no matter how, each unit always has the probability of selection of `n/N`.
+- SRS is used only if the population is small, because large populations make it logistically complex, thus, expensive.
+- SRS produces i.i.d data = independent and identically distributed
+
+Example: we want to know the average response time of `N=2,500` emails. Since the computation is manual, we select `n=100` manually and measure the response time.
+- `n/N = 100 / 2,500`
+- We cannot take the first 100 emails, because that sample might be biased: e.g., first 100 might come from staff
+- We need to make the list of `2,500` and randomly select `100`
+
+#### 8.2.2 Compley Probability Sampling: Grouping in Stages
+
+Grouping is performed at several levels or stages:
+- Population is divided into different **strata** and a part of the sample/sampling is allocated to each stratum (e.g., northeastern region of USA, etc.). Stratification reduces variance.
+- **Clusters** of population units (e.g., counties) are randomly sampled (= selected) first (with known probability) within the strata. That saves costs of data collection.
+- Units are randomly selected from clusters according to a probability of selection; that probability of selection doesn't need to be equal for all units, though.
+
+The probability of selection of a unit is determined by
+- Number of clusters sampled (= selected) in each stratum: `a`
+- Total number of clusters in each stratum: `A`
+- Number of units sampled (= selected) in each cluster: `b`
+- Total number of units in population in each cluster: `B`
+
+(Equal) Probability of selection of a unit: `(a/A) * (b/B)`
+
+The probability of selection is a factor used during the population estimate computation!
+
+Note that within a cluster, units might be assigned to subgroups that have different probabilities of selection! For instance, we might wnat to have a higher rate of certain socio-economic groups in given clusters/counties.
+
+Designing sampling strategies for large populations is much more cost effective using complex probability sampling than SRS (simple randdom sampling). In the case of NHANES, a trailer is sent to the selected counties. That is much more efficient that having trailers travel around randomly.
+
+### 8.3 Non-Probability Sampling
+
+Properties:
+- Probabilities of selection of units cannot be determined
+- 
