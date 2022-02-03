@@ -1182,7 +1182,7 @@ So what can we do? There are two possible approaches to make statements:
 
 We have our dataset with non-probability sampling.
 We find a similar dataset but with a probability sampling: both need to have similar features/measurements, or at least an overlapping set.
-A logistic regression model is trained with both datasets using all the features we have available for the units: the model predicts the probability of a sample to belong to the non-probablity sampling (y = 1).
+A logistic regression model is trained with both datasets stacked together using the features we have available for the units: the model predicts the probability of a sample to belong to the non-probablity sampling (y = 1).
 Then, the logistic regression is applied to the non-probability dataset to see if we select the samples or not.
 
 In understand that the ones with a high probability of belonging to the probability sample are taken. Then, methods from probability samplings are applied, as if we knew the probability of selection.
@@ -1201,5 +1201,15 @@ Example:
 
 However, if the weighting factor/variable is not related to the vairable of interest, we will not reduce the sampling bias. For instance: we adjust for gender but the ultimate variable of interest is salary, which probably depends more in the country of origin.
 
-#### Example: Twitter
+#### 8.3.3 Examples
 
+**Twitter Example:** Imagine we collect 100 of thousands of tweets of people related to the President. We classify them as support or not support. We have lots of data, but the approach is still a non-probability sampling and we cannot make inferences of the global population:
+- The probability of a tweet being selected cannot be determined
+- Twitter users are not a random sample of a larger population
+- We have a high potential for bias, lack of representation
+
+**Google Flu Trends:** in 2008 Google created Google Flu Trends. Their goal was to predict the number of flu infections from google searches 2 weeks ahead of the CDC in USA. It seemed to work for a window of time, but it soon started to fail: peaks undetected, seasonal effects missed, overfitting, etc. Basically, the samples were taken from a non-probability distribution; highly biased. See the [Wired article](https://www.wired.com/2015/10/can-learn-epic-failure-google-flu-trends/).
+
+**Xbox user survey:** Thousands of Xbox user survey responses on the 2012 election predicted very accurately the election result. Although it was a non-rpobability sampling, the authors used a weighting calibration to infer population behavior. [Paper: Forecasting elections with non-representative polls](https://www.sciencedirect.com/science/article/abs/pii/S0169207014000879?via%3Dihub)
+
+Therefore: **always ask what type of dataset is behind**: if it is a non-probability sampling, we need to question how representative of the population our sample is.
