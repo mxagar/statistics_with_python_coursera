@@ -69,7 +69,22 @@ Overview of contents:
      - Exercises: Application of Previous Sections to New Variables
    - `08_Assingment_Cartwheel_Dataset.ipynb`
 8. Populations and Samples
-9. Probability Samples abd Sampling Distributions
+   - 8.1 Sampling from Well-Defined Populations: Options 1, 2, 3
+   - 8.2 Probability Sampling (Option 1)
+     - 8.2.1 Simple Random Sampling (SRS): `n/N`
+     - 8.2.2 Compley Probability Sampling: Grouping in Stages
+   - 8.3 Non-Probability Sampling (Option 3)
+     - 8.3.1 Pseudo-Randomization
+     - 8.3.2 Calibration
+     - 8.3.3 Examples
+       - Twitter
+       - Google Flue Trends
+       - Xbox user survey
+9.  Probability Samples and Sampling Distributions
+    - 9.1 Sampling Variance & Sampling Distributions
+      - The Importance of Sampling Variance
+      - Demo: Interactive Sampling Distribution
+    - 9.2 Beyond Means: Sampling Distributions of Other Common Statistics
 10. Inference in Practice
 11. Python for **Sampling Distrubutions**
 
@@ -120,6 +135,8 @@ A general question for datasets is wether they are **i.i.d.** = **independent an
 
 - Each observation of a sample is independent from all the others
 - The values that we are observing arise from some common (same?) distribution
+
+Important note on nomenclature: **a sample is a subset in the population which is composed by units**. That differs from the Machine Learning speak.
 
 Having i.i.d. datasets allows us to make some assumptions and use some statistical tools. However, data is not always like that; examples in test scores:
 
@@ -1074,7 +1091,7 @@ x.apply(lambda z: z/z.sum(), axis=1) # axis = 1: apply to rows
 
 ## 8. Populations and Samples
 
-### 8.1 Sampling from Well-Defined Populations
+### 8.1 Sampling from Well-Defined Populations: Options 1, 2, 3
 
 Before modern statistics, **census** methods were applied to measure populations, i.e., every unit was measured to make statements about the population. [Jerzy Neyman](https://en.wikipedia.org/wiki/Jerzy_Neyman) introduced the concept of randomly sampling a population and still be able to make statements of the population.
 
@@ -1105,7 +1122,17 @@ How can we make inferential statements about that population?
 - (1) population features
 - and the (2) uncertainty in survey estimates.
 
+Notes on nomenclature:
+- *feature* refers to characteristics of the distribution (size, population mean, variance, etc.), not to the features or variables used in Machine Learning -- as I understand.
+- *estimate* is a descriptive statistic that approximates to a feature, such as a sample mean, as I understand. In other words, feature is more general, estimate is an approximation of the feature.
+- *statistic* is an an estimate; an estimate/statistic summarizes a property of the distirbution(s): mean, variance, correlation, etc.
+
 All in all, we get a **representative, realistic, random** sampling with which we can infer the properties of the population.
+
+Note that a population can be a closed group of units, not necessarily all units:
+- All Facebook users is a population
+- All US citizens is also a population
+- All human beings is also a population
 
 ### 8.2 Probability Sampling (Option 1)
 
@@ -1153,7 +1180,9 @@ Note that within a cluster, units might be assigned to subgroups that have diffe
 
 Designing sampling strategies for large populations is much more cost effective using complex probability sampling than SRS (simple randdom sampling). In the case of NHANES, a trailer is sent to the selected counties. That is much more efficient that having trailers travel around randomly.
 
-### 8.3 Non-Probability Sampling
+Final remark: in a cluster of `B` units, the selected `b` represent those `B`!
+
+### 8.3 Non-Probability Sampling (Option 3)
 
 Properties:
 - Probabilities of selection of units cannot be determined a priori
@@ -1181,8 +1210,8 @@ So what can we do? There are two possible approaches to make statements:
 #### 8.3.1 Pseudo-Randomization
 
 We have our dataset with non-probability sampling.
-We find a similar dataset but with a probability sampling: both need to have similar features/measurements, or at least an overlapping set.
-A logistic regression model is trained with both datasets stacked together using the features we have available for the units: the model predicts the probability of a sample to belong to the non-probablity sampling (y = 1).
+We find a similar dataset but with a probability sampling: both need to have similar measurement variables, or at least an overlapping set.
+A logistic regression model is trained with both datasets stacked together using the variables we have available for the units: the model predicts the probability of a sample to belong to the non-probablity sampling (y = 1).
 Then, the logistic regression is applied to the non-probability dataset to see if we select the samples or not.
 
 In understand that the ones with a high probability of belonging to the probability sample are taken. Then, methods from probability samplings are applied, as if we knew the probability of selection.
@@ -1192,7 +1221,7 @@ The videos explain very poorly how that works in practice, only high level expla
 #### 8.3.2 Calibration
 
 Weights are used on units to mirror a distribution of a known population.
-For that we need to select some features/variables from which know the population distributions.
+For that we need to select some variables from which know the population distributions.
 
 Example:
 - Non-probaility sample: 70% Female, 30% Male
@@ -1213,3 +1242,73 @@ However, if the weighting factor/variable is not related to the vairable of inte
 **Xbox user survey:** Thousands of Xbox user survey responses on the 2012 election predicted very accurately the election result. Although it was a non-rpobability sampling, the authors used a weighting calibration to infer population behavior. [Paper: Forecasting elections with non-representative polls](https://www.sciencedirect.com/science/article/abs/pii/S0169207014000879?via%3Dihub)
 
 Therefore: **always ask what type of dataset is behind**: if it is a non-probability sampling, we need to question how representative of the population our sample is.
+
+## 9. Probability Samples and Sampling Distributions
+
+### 9.1 Sampling Variance & Sampling Distributions
+
+A **sampling distribution** of an estimate arises when we estimate features (e.g., mean) of random samplings many times following the same methodology or design: same population, same probability of selection per unit/strata, etc. In other words:
+- We have a pupulation of `N`
+- We select `n`, measure a characteristic and compute the mean
+- Then we repeat the process again with another random sampling of `n` units
+- At the end, we have a **distribution of means**
+
+Some important properties of sampling dirtibutions
+- They a hypothetical: we seldom have the opportunity of repeating the measurements
+- **The distribution of estimates (e.g., means) is different of the distribution of the characteric measured!**
+- **Central Limit Theorem**: if we take a large enough probability sample size, **the sampling distribution of estimates will be normal**.
+- The key idea is that the mean of the sampling distrbution will be the estimate of the population! I understand that the estimate does not need to be mean of a variable, but any measurement.
+
+The **sampling variance** is the variability of the estimates in the sampling distribution, e.g., the variance of the distirbution of means. It is a measurement of the spread of the sampling distribution.
+
+The **sampling error** is the difference of the sampling estimate mean and the mean of the sampling distribution = difference between the mean of the population and the mean of one sample. Obviously, the larger the sample size, the smaller the sampling error and sampling variance.
+
+An interesting simulation of the effect the sample size and cluster size in the sampling distribution is shown in the following picture:
+- With larger samples sizes (`n = 100, 500, 5000`) the variance of the sampling distrution becomes smaller
+- With larger cluster sizes (`b = 1 (SRS), 10, 50`), i.e., less clusters altogether, the variance of the sampling distribution increases. The idea is that we select big clusters randomly and some are left apart; better to select more (distrubuted) smaller ones.
+
+![Sampling distributions: effects of sample size and cluster size](./pics/sampling_distributions.png)
+
+#### The Importance of Sampling Variance
+
+In practice we have only one sample. But the sampling theory allows us to estimate features (mean and variance) of the sampling distribution based on one sample! For that, we need the probabilities of selection we used in our design.
+
+Since we are able to estimate the variance of the sampling distribution, we can infer where most estimates will be based on a sample, i.e., we can estimate population features! That is analyzed in Section 10.
+
+#### Demo: Interactive Sampling Distribution
+
+Web app create with R Studio Shiny Apps:
+
+[Demo: Interactive Sampling Distribution](https://markkurzejaumich.shinyapps.io/multiple_population_bias/)
+
+In the demo, the sampling distributions of the weight amoung the students of the University of Michigan (UoM) are simulated.
+
+We have two distinct target Populations:
+1. All University of Michigan (UoM) students
+2. Gym-goers of UoM
+
+Both population distributions are provided for the body weight, being both normally distributed but the body weight of gym goers 20 pounds larger aproximately.
+
+Then, simulations are done with parameters we can choose with a slider.
+The ultimate point is to see how the sampling distributions vary.
+
+Parameters:
+- Target population
+- Percentage of UoM students that are gym-goers
+- Sample size
+- Number of samples drawn
+
+### 9.2 Beyond Means: Sampling Distributions of Other Common Statistics
+
+After the **Central Limit Theorem**, sampling distirbutions of statistics tend to the normal distribution; as we increase the sample size, the distributions become more symmetric, more centered around the true value, and with less spread.
+
+Note that it works not only for the means, but also for any other statistics of feture estimates: variance, correlation, linear regression slope, proportions, etc.
+
+## 10. Inference in Practice: How Do We Infer Population Characteristics from One Sample?
+
+
+## Feedback
+
+Topics from the 4th week such as population sampling, sampling distributions, etc. are quite intuitive and can be very easily described graphically. However, the course allocates a lot of time for them and slides full of text are used. Additionally, these slides do not even try to clearly differentiate similarly sounding concepts, e.g., sample as 'select', sampling as 'sample subset' and as 'selecting', probability sample, sampling/sample variance and error, etc. Also, sometimes more abstract (i.e., opaque) terms are employed without spending enough time in their definition, e.g., estimates in substitution of mean or other descriptive statistics, etc.
+
+Therefore, one feels the course overcomplicates intuitive concepts, trying to be academically formal in the definitions.
