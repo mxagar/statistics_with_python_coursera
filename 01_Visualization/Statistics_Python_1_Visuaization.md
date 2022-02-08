@@ -1159,7 +1159,7 @@ Example: we want to know the average response time of `N=2,500` emails. Since th
 - We cannot take the first 100 emails, because that sample might be biased: e.g., first 100 might come from staff
 - We need to make the list of `2,500` and randomly select `100`
 
-#### 8.2.2 Compley Probability Sampling: Grouping in Stages
+#### 8.2.2 Complex Probability Sampling: Grouping in Stages
 
 Grouping is performed at several levels or stages:
 - Population is divided into different **strata** and a part of the sample/sampling is allocated to each stratum (e.g., northeastern region of USA, etc.). Stratification reduces variance.
@@ -1212,11 +1212,10 @@ So what can we do? There are two possible approaches to make statements:
 We have our dataset with non-probability sampling.
 We find a similar dataset but with a probability sampling: both need to have similar measurement variables, or at least an overlapping set.
 A logistic regression model is trained with both datasets stacked together using the variables we have available for the units: the model predicts the probability of a sample to belong to the non-probablity sampling (y = 1).
-Then, the logistic regression is applied to the non-probability dataset to see if we select the samples or not.
 
-In understand that the ones with a high probability of belonging to the probability sample are taken. Then, methods from probability samplings are applied, as if we knew the probability of selection.
+The model is applied to the non-probability sampling units and the inferred probability is inverted to create a pseudo weight which replaces the weight we should have used to build a probability sampling.
 
-The videos explain very poorly how that works in practice, only high level explanations are given using confusing and repetitive terms and their contraries.
+More on that in Section 10.5.
 
 #### 8.3.2 Calibration
 
@@ -1306,9 +1305,122 @@ Note that it works not only for the means, but also for any other statistics of 
 
 ## 10. Inference in Practice: How Do We Infer Population Characteristics from One Sample?
 
+We want to estimate parameters of interest of a population from one sample, without having the complete sampling distribution.
+
+Parameters of interest can be
+- A mean
+- Proportion
+- Regression coefficient
+- Odds ratio
+- ...
+
+Approaches
+
+- Confidence interval estimate of the parameter of interest
+- Hypothesis testing of the parameter of interest
+
+Key assumptions we do  for both approaches (always take them into account!):
+
+1. We have a probability sampling.
+2. The sampling distribution is normal, based on the Central Limit Theorem; for that, we need to have sample sizes which are large enough. **Question: does the variable itself need to be normally distributed?**
+3. The sample is unbiased: each unit from the sample was taken with the correct probability of selection; we need to address that issue during the design, otherwise, we will have a biased estimate (sample mean or parameter shifted from the true population mean/parameter), and the approaches described below fail.
+
+### 10.1 Confidence Interval
+
+Given that we have an unbiased sample, we consider our point estimate of the parameter of interest to be **unbiased, i.e., close to the parameter of the population**. Similarly, other unbiased samples will also have their parameter close to the one of the population! In the same line of thought, the variance of the population will be similar to the variance of the sample.
+
+We define the **95% Confidence Interval** as the spread of **2 standard deviations** around our sample estimate parameter; given a normal distribution, that will cover 95% of the possible measurements.
+
+`95% Confidence Interval (CI) = Sample Parameter Estimate (e.g., Mean) +- Standard Deviation (SD= sqrt(Sample Variance))`
+
+That `95% CI` is equivalent to the `0.05 Significance Level`, meaning only 5% might lie out from the interval.
+Note that the **standard deviation** is also called the **standard error**.
+
+Given the properties above, we conclude that most `CIs` of different samples will largely overlap so that the population estimate will be contained in all of them!
+
+### 10.2 Hypothesis Test
+
+We as the following question: Could the value of the parameter be X (= `H0 = Null Hypothesis`)?
+
+To check that, we see how far away we are from that X, i.e., **how many standard deviations**:
+
+`(Sample Estimate - Null Value) / SD Sample`
+
+If the value is high, the null hypothesis is rejected.
+
+### 10.3 [Seeing Theory](https://seeing-theory.brown.edu/index.html)
+
+The [Seeing Theory](https://seeing-theory.brown.edu/index.html) is a very interesting website from the Brown University in which many concepts in statistics are explained visually with exeperiments. **Very nice!**
+
+Have a look at: 
+
+- Chapter 3: Probability Distributions (Discrete & Continuous), Central Limit Theorem
+- Chapter 4: Confidence Interval
+- Chapter 6: Regression Analysis, Correlation, ANOVA
+
+### 10.4 Preventing Bad/Biased Samples
+
+Even though Simple Random Sampling (SRS) is a probaility sampling expected to produce independent and identically distributed observations (i.d.d.), we might be introducing bias with it if we don't control the allocation of the ID pool we are using; for instance: if we choose 1000 random telephone numbers, but number pool is not uniformly distributed in our target pupulation.
+
+An approach to avoid that is **stratification***: we differentiate strata (e.g., states) of a known size in which we define independent pools of telephone numbers. Stratification has also the nice propertiy that the variance between the strata is not incorporated into the variance within the strata. So, **when in doubt, stratify**.
+
+**Selection bias**: that occurs when our sample has units that do not cover the complete population with their respective probailities of occurrence. Example: measure weight of gym-goers. Solution: stratify sample correctly and measure a representative sample pf the population.
+
+**Unit Nonresponse**: that occurs when selected units (e.g., people) do not participate, breaking the equilibrium engineered in our design. In consequence, even with a perfect design, the measurements will be biased unless we try to get equivalent unit measurements.
+
+**Nonresponse Bias**: when there is a tendency for units that provide a response to produce different data than the one that would come from units more likely to reject a response.
+
+**Item Nonresponses**: Nonresponse bias focused on a particular measurement, e.g., income.
+
+Biases related to nonresponse can be approached as follows:
+- Ask for follow ups
+- Provide alternative means to answer (web)
+- Choose equivalent units
+- Weight available measurements to match expected proportions
+- ...
+
+### 10.5 Inference for Non-Probability Samples
+
+Section 10 has dealt with proobability samplings.
+How can we infer population properties from non-probability samplings?
+Two major approaches:
+
+1. Quasi-Randomization or Pseudo-Randomization
+2. Population Modelling
+
+#### 10.5.1 Quasi-Randomization or Pseudo-Randomization
+
+We combine data from the non-probability sample with data from another probability sample; both need to have an overlap of measured variables. However, **important note**: the non-probability sample might have some other variables not appearing in the probability sample, and those variables might the ones we're insterested in!
+
+Example:
+
+- Non-probability: blood pressure and cholesterol measurements on campus of people that stop by
+- Probability: NHANES blood pressure measurements
+- Interested in: cholesterol measurements, which are not available at NHANES
+
+Both datasets are stacked taking the overlapping variables. Then, a logistic regression is built to predict the label `NPSAMPLE`: For the non-probability sample the true `NPSAMPLE = 1`, for the probability sample `NPSAMPLE = 0`. So `NPSAMPLE` tells the probability of a unit to belong to the non-probability sample by using the overlapping variables. However, weights are applied to the unit sin the sample!
+
+- Units from the NP sample have weight 1
+- Units from the probability sample have as weight their selection probability!
+
+We apply the trained model to the non-probability sample and we compute the sampling weights of the units using the inverted value of the inferred `NPSAMPLE`:
+
+`Non-probability Sample Correction Weight = 1 / predict probability of NPSAMPLE`
+
+Then, we apply those weights to the non-probability sample, and we have our "adjusted" dataset which resembles a probability sample. The effect is that units resembling the probability sample are magnified, equilibrating the sample.
+
+However, there is one issue: it is not possible to estimate the variance of the sampling distribution as we did with the probability sample. Therefore, it is not straightforaward to infer the `CI` of the populatiion. One possible solution is to simulate replications of measurements with subsets of the non-probability sample: we take subsets and repeat the above described approach; thus, a distribution of values is obtained. The variance (thus, standard deviation) of the sampling distribution is obtained from that distribution.
+
+This is an on-going area of research; there is not a lot written on it.
+
+For more, see "Elliot, M.R. and Vaillant, R. Inference for Non-Probability Samples. 2017".
+
+#### 10.5.2 Population Modelling
+
+
 
 ## Feedback
 
-Topics from the 4th week such as population sampling, sampling distributions, etc. are quite intuitive and can be very easily described graphically. However, the course allocates a lot of time for them and slides full of text are used. Additionally, these slides do not even try to clearly differentiate similarly sounding concepts, e.g., sample as 'select', sampling as 'sample subset' and as 'selecting', probability sample, sampling/sample variance and error, etc. Also, sometimes more abstract (i.e., opaque) terms are employed without spending enough time in their definition, e.g., estimates in substitution of mean or other descriptive statistics, etc.
+Topics from the 4th week such as population sampling, sampling distributions, etc. are quite intuitive and can be very easily described graphically. However, the course allocates a lot of time for them and slides full of text are used -- which is confusing. Additionally, the slides do not even try to clearly differentiate similarly sounding concepts, e.g., sample as 'select', sampling as 'sample subset' and as 'selecting', probability sample, sampling/sample variance and error, etc. Also, sometimes more abstract (i.e., opaque) terms are employed without spending enough time in their definition, e.g., estimates in substitution of mean or other descriptive statistics, etc.
 
 Therefore, one feels the course overcomplicates intuitive concepts, trying to be academically formal in the definitions.
