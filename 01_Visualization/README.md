@@ -15,7 +15,7 @@ Overview of contents:
 
 - `Statistics_Python_1_Visuaization.md`: guide, notes.
 - `lab/`
-  - `lab/01_DataManagement.ipynb`
-  - `lab/Cartwheeldata.csv`
-  - `lab/nhanes_2015_2016.csv`
+  - `lab/*.ipynb`: 12 notebooks generated in chronological order during the course covering the learned concepts; see `Statistics_Python_1_Visuaization.md` for more information on them
+  - `lab/Cartwheeldata.csv`: Cartwheel dataset used during the course
+  - `lab/nhanes_2015_2016.csv`: NHANES dataset used during the course
   
