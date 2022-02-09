@@ -1405,11 +1405,11 @@ Both datasets are stacked taking the overlapping variables. Then, a logistic reg
 
 We apply the trained model to the non-probability sample and we compute the sampling weights of the units using the inverted value of the inferred `NPSAMPLE`:
 
-`Non-probability Sample Correction Weight = 1 / predict probability of NPSAMPLE`
+`Non-probability Sample Correction Weight = 1 / predicted probability of NPSAMPLE`
 
 Then, we apply those weights to the non-probability sample, and we have our "adjusted" dataset which resembles a probability sample. The effect is that units resembling the probability sample are magnified, equilibrating the sample.
 
-However, there is one issue: it is not possible to estimate the variance of the sampling distribution as we did with the probability sample. Therefore, it is not straightforaward to infer the `CI` of the populatiion. One possible solution is to simulate replications of measurements with subsets of the non-probability sample: we take subsets and repeat the above described approach; thus, a distribution of values is obtained. The variance (thus, standard deviation) of the sampling distribution is obtained from that distribution.
+However, there is one issue: it is not possible to estimate the variance of the sampling distribution as we did with the probability sample using those pseudo weights. Therefore, it is not straightforaward to infer the `CI` of the populatiion. One possible solution is to simulate replications of measurements with subsets of the non-probability sample: we take subsets and repeat the above described approach; thus, a distribution of values is obtained. The variance (thus, standard deviation) of the sampling distribution is obtained from that distribution.
 
 This is an on-going area of research; there is not a lot written on it.
 
@@ -1417,7 +1417,55 @@ For more, see "Elliot, M.R. and Vaillant, R. Inference for Non-Probability Sampl
 
 #### 10.5.2 Population Modelling
 
+Regression models are fit on the non-probability sample which infer the variable of interest aggregates (totals) in the probability sample:
 
+- Both samples have additional overlapping variables, which are the independent variables of the regression model.
+- The non-probability sampling has the variable of interest, missing in the probability sample; the aggregate (usually the total) of that variable is the dependent variable in the regression model.
+- After fitting the regression model, we predict the variable of interest aggregate of the probability sample
+- Then, the weighted mean is computed: `predicted total estimate / estimated population size`
+
+I am not sure how the thing the with the aggregates works.
+Very good regression models are needed.
+Standard error (variance) estimation can happen also fitting models (the variance is an aggregate?) or throughsimulated replication, as in the previous method.
+
+The advantage in contrast to the previous method is that we don't need a probability sample that collects the same measurements. But I though we need overlapping variablles to fit the regression model, even though these are not the variables of interest?
+
+#### 10.5.3. Complex Samples
+
+A complex sample is any probability sample that involves more than Simple Ransom Sampling (SRS); we apply more advanced design strategies, e.g. systematic randomization after stratification.
+
+Features:
+- **Stratification**: sample parts are allocated to groups or strata (e.g., regions)
+  - The goal of the allocation is to minimize variace, specially between-stratum variance
+  - Example: proportionate allocation
+    - Population is divided in 70% in startum A, 30% in B
+    - In our sample, we replicate the proportions in allocation: 70% sampled from A, 30% sampled from B
+- **Cluster sampling**: cluster or groups are defined hierarchically upwards (e.g., county, state, region) and those clusters are sampled too. That reduces costs.
+  - This approach increases the variance: within a cluster the variance is expected to be lower, but if we draw too different clusters, the total variance increases
+- **Weighting**: we might need to adjust the probabilities of selection if the multiple cluster hierarchies are involved in the sampling.
+  - Weights are computed as the inverse of the probability of selection
+  - If my `probability of selection = 1/100 -> weight = 100`: I represent myself and other 99 units of the population.
+  - We can adjust also with the probaility of responding: I need to represent to the people that did not respond
+    - `probability of selection = 1/100`
+    - `probability of responsing = 50%`
+    - `adjusted weight = 100 * 1/0.5 = 200`
+  - Not using weights properly leads to biased results
+  - Highly variable weights lead to high variance; intuitively it is understandable: we have large and small representation values.
+
+The design effect is the change in variance due to
+
+- Sample size (it decreases with larger sizes)
+- Stratification (it decreases with it)
+- Cluster sampling (in increases with clustering)
+- Weighting (it increases if weighting variation increases)
+
+If we are using a software, it important to identify and define precisely all this features in order to make unbiased estimations. We also need the final survey weights.
+
+Analytic error: faiilure to detect and use those features properly. Many studies are not aware of that.
+
+Looking at the documentation of a dataet is essential. Knowing how teh data was collected is fundamental to know how to extract unbiased estimations.
+
+Recommended text book on the topic: "Applied Survey Data Analysis", Heeringa et al., 2017.
 
 ## Feedback
 
