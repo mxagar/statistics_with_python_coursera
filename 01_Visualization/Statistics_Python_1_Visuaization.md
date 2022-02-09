@@ -85,8 +85,20 @@ Overview of contents:
       - The Importance of Sampling Variance
       - Demo: Interactive Sampling Distribution
     - 9.2 Beyond Means: Sampling Distributions of Other Common Statistics
-10. Inference in Practice
+10. Inference in Practice: How Do We Infer Population Characteristics from One Sample?
+    - 10.1 Confidence Interval
+    - 10.2 Hypothesis Test
+    - 10.3 [Seeing Theory](https://seeing-theory.brown.edu/index.html)
+    - 10.4 Preventing Bad/Biased Samples
+    - 10.5 Inference for Non-Probability Samples
+      - 10.5.1 Quasi-Randomization or Pseudo-Randomization
+      - 10.5.2 Population Modelling
+    - 10.6. Complex Samples
 11. Python for **Sampling Distributions**
+    - `09_Sampling_Biased_Population.ipynb`
+    - `10_Randomness_and_Reproducibility.ipynb`
+    - `11_Empirical_Rule_Distribution.ipynb`
+    - `12_Sampling_Distributions_NHANES.ipynb`
 
 ## 1. What is Statistics?
 
@@ -1430,7 +1442,7 @@ Standard error (variance) estimation can happen also fitting models (the varianc
 
 The advantage in contrast to the previous method is that we don't need a probability sample that collects the same measurements. But I though we need overlapping variablles to fit the regression model, even though these are not the variables of interest?
 
-#### 10.5.3. Complex Samples
+#### 10.6. Complex Samples
 
 A complex sample is any probability sample that involves more than Simple Ransom Sampling (SRS); we apply more advanced design strategies, e.g. systematic randomization after stratification.
 
@@ -1467,8 +1479,388 @@ Looking at the documentation of a dataet is essential. Knowing how teh data was 
 
 Recommended text book on the topic: "Applied Survey Data Analysis", Heeringa et al., 2017.
 
-## Feedback
+## 11. Python for **Sampling Distributions**
 
-Topics from the 4th week such as population sampling, sampling distributions, etc. are quite intuitive and can be very easily described graphically. However, the course allocates a lot of time for them and slides full of text are used -- which is confusing. Additionally, the slides do not even try to clearly differentiate similarly sounding concepts, e.g., sample as 'select', sampling as 'sample subset' and as 'selecting', probability sample, sampling/sample variance and error, etc. Also, sometimes more abstract (i.e., opaque) terms are employed without spending enough time in their definition, e.g., estimates in substitution of mean or other descriptive statistics, etc.
+Altogether, four notebooks are created in the 4th week (Sections 9 & 10). This time, they are examples that showcase the theoretical concepts, not so much practical tools.
 
-Therefore, one feels the course overcomplicates intuitive concepts, trying to be academically formal in the definitions.
+The notebooks are in `./lab`:
+
+- `09_Sampling_Biased_Population.ipynb`: This notebook replicates the weight measurement dataset shown in the web application of the course. Basically, we have a population on the University of Michigan (UoM) campus with a weight distribution and a subset of people that go to the gym. We then take different samples and plot the weight estimates: a probability sample, a biased sample with gym-goers, etc.
+- `10_Randomness_and_Reproducibility.ipynb`: Simple examples in which how to correctly use the `random` module is shown, with  applications for sampling.
+- `11_Empirical_Rule_Distribution.ipynb`: Simple example in which the emprirical rule of 68-95-99.7 is displayed on a graph. Also, the experimental cumulative distribution function (ECDF) of a measurement population is computed.
+- `12_Sampling_Distributions_NHANES.ipynb`: This notebook shows how to create sampling dirstibutions with the NHANES dataset. However, note that sampling distributions are not usually created -- they are rather a theoretical concept. Additionally, the effect of changing the sample size is evaluated: variance decreases with larger sample sizes.
+
+In the following, the most important code lines are summarized.
+
+### `09_Sampling_Biased_Population.ipynb`
+
+Sampling from a Biased Population.
+
+This notebook replicates the weight measurement dataset shown in the web application of the course. Basically, we have a population on the University of Michigan (UoM) campus with a weight distribution and a subset of people that go to the gym. We then take different samples and plot the weight estimates: a probability sample, a biased sample with gym-goers, etc.
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns; sns.set()
+
+# Simulation parameters: UoM vs Gym-goers
+mean_uofm = 155
+sd_uofm = 5
+mean_gym = 185 
+sd_gym = 5 
+# Which proportion goes to the gym?
+gymperc = 0.3
+totalPopSize = 40000
+
+# Create the distributions of the two subgroups
+# Arrays of random weights are created
+# following the normal distribution with the above params
+uofm_students = np.random.normal(mean_uofm, sd_uofm, int(totalPopSize * (1 - gymperc)))
+students_at_gym = np.random.normal(mean_gym, sd_gym, int(totalPopSize * (gymperc)))
+
+# Create the population from the subgroups: concatenate both arrays
+population = np.append(uofm_students, students_at_gym)
+
+# Plot
+plt.figure(figsize=(10,12))
+
+# UofM students only
+plt.subplot(3,1,1)
+sns.histplot(uofm_students,kde=True,bins=100)
+plt.title("UofM Students Only")
+plt.xlim([140,200])
+
+# Gym-Goers only
+plt.subplot(3,1,2)
+sns.histplot(students_at_gym,kde=True,bins=100)
+plt.title("Gym Goers Only")
+plt.xlim([140,200])
+
+# Both groups together
+plt.subplot(3,1,3)
+sns.histplot(population,kde=True,bins=100)
+plt.title("Full Population of UofM Students")
+# Population mean: vertical line
+plt.axvline(x = np.mean(population),color='r')
+plt.xlim([140,200])
+
+# This line is necessary only if we plot from a python file...
+plt.show()
+
+####### ---
+
+# Sampling Distributions: Biased vs Unbiased
+
+# Simulation parameters
+numberSamps = 5000 # How many samples do I draw?
+sampSize = 50 # Sampling size = number of units in sample
+
+# UNBIASED Sampling Distribution
+# Get the sampling distribution of the mean from the total population
+# Allocate empty vector and fill it in; otherwise, we could've used append()
+mean_distribution_unbiased = np.empty(numberSamps)
+for i in range(numberSamps):
+    # Pick sampSize random units (uniform, because units are already normally distributed)
+    random_students = np.random.choice(population, sampSize)
+    mean_distribution_unbiased[i] = np.mean(random_students) 
+
+# BIASED Sampling Distribution
+# Get the sampling distribution of the mean from only the gym
+mean_distribution_biased = np.empty(numberSamps)
+for i in range(numberSamps):
+    # Pick sampSize random units (uniform, because units are already normally distributed)
+    random_students = np.random.choice(students_at_gym, sampSize)
+    mean_distribution_biased[i] = np.mean(random_students) 
+    
+# Plot
+plt.figure(figsize = (10,12))
+
+# Population
+plt.subplot(3,1,1)
+sns.histplot(population,kde=True,bins=100)
+plt.title("Full Population of UofM Students")
+plt.axvline(x = np.mean(population), color='red')
+plt.xlim([140,200])
+
+# UNBIASED
+# Sampling distribution = distribution of sample means we drew from population
+plt.subplot(3,1,2)
+sns.histplot(mean_distribution_unbiased,kde=True,bins=100)
+plt.title("Sampling Distribution of the Mean Weight of Population Samples")
+plt.axvline(x = np.mean(population), color='red')
+plt.axvline(x = np.mean(mean_distribution_unbiased), color = "k", linestyle='--')
+plt.xlim([140,200])
+
+# BIASED
+# Sampling distribution = distribution of sample means we drew from gym-goers subset
+plt.subplot(3,1,3)
+sns.histplot(mean_distribution_biased,kde=True,bins=100)
+plt.title("Sampling Distribution of the Mean Weight of Gym-Goer Samples")
+plt.axvline(x = np.mean(population), color='red')
+plt.axvline(x = np.mean(mean_distribution_biased), color = "k", linestyle='--')
+plt.xlim([140,200])
+
+plt.show()
+
+```
+
+### `10_Randomness_and_Reproducibility.ipynb`
+
+Randomness and Reproducibility.
+
+In python we have a **pseudo-random number generator** (PRNG), which creates a sequence of (pseudo) random number given a random seed selected by the user. One given seed produces the same sequence of (pseudo) random numbers; hence, we can repoduce randomness.
+
+```python
+import random
+
+random.seed(1234)
+# First random number in sequence
+random.random()
+# Second random number in sequence
+random.random()
+
+# When we re-define the same seed, the same sequence starts again!
+random.seed(1234)
+random.random()
+
+# Uniform random number
+random.uniform(25,50)
+
+# List of uniformly distirbuted random number
+unifNumbers = [random.uniform(0,1) for _ in range(10)]
+
+# Normal random number
+mu = 0
+sigma = 1
+random.normalvariate(mu, sigma)
+
+####### ---
+
+# Random Sampling from a Population
+
+import random
+import numpy as np
+
+# We create a normally distribution of measurements for a population
+mu = 0
+sigma = 1
+population = [random.normalvariate(mu, sigma) for _ in range(10000)]
+
+# We get two samples of 500 units/measurements each
+sampleA = random.sample(population, 500)
+sampleB = random.sample(population, 500)
+
+# Sample means should be similar to the population mean,
+# as well as the standard deviation
+print(np.mean(sampleA))
+print(np.std(sampleA))
+print(np.mean(sampleB))
+print(np.std(sampleB))
+
+# Sampling distirbution: pick 100 samples of 1000 units (sample size) each
+# Note that the mean of the standard deviations is computed, not the std of the means
+# The std of the means refers to the spread of the sampling distirbution
+means = [np.mean(random.sample(Population, 1000)) for _ in range(100)]
+stds = [np.std(random.sample(Population, 1000)) for _ in range(100)]
+# The mean of the sampling distirbution 
+print(np.mean(means))
+print(np.mean(stds))
+
+# It is also possible to use numpy
+import numpy as np
+np.random.seed(123)
+mu = 100
+sigma = 1
+sample = np.random.normal(mu, sigma, 3)
+print(sample)
+
+# Sampling
+population = np.arange(1,101)
+#sample = np.random.choice(population,10)
+sample = random.sample(list(population),10)
+print(sample)
+sample = np.random.choice(population,10)
+print(sample)
+
+```
+
+
+### `11_Empirical_Rule_Distribution.ipynb`
+
+The Empirical Rule of Distribution.
+
+The empirical rule states that if a distribution of observations is normal:
+
+- 68% of observations will be within a +- `sigma` range around the mean
+- 95% of observations will be within a +- `2 * sigma` range around the mean
+- 99.7% of observations will be within a +- `3 * sigma` range around the mean
+
+In the following, some plots on that are shown using a simulated distribution.
+More importantly, an experimental cumulative distribution function can be built, which maps the observation values with the pupulation proportion under the values (i.e., the integral function of the probability distribution function).
+
+```python
+import random
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+random.seed(1738)
+
+# Distribution of observations
+# Hours of sleep
+mu = 7
+sigma = 1.7
+Observations = [random.normalvariate(mu, sigma) for _ in range(100000)]
+
+# Empirical rule
+sns.histplot(Observations,kde=True,bins=100)
+# 68% 
+plt.axvline(np.mean(Observations) + np.std(Observations), color = "g")
+plt.axvline(np.mean(Observations) - np.std(Observations), color = "g")
+# 95%
+plt.axvline(np.mean(Observations) + (np.std(Observations) * 2), color = "y")
+plt.axvline(np.mean(Observations) - (np.std(Observations) * 2), color = "y")
+
+# Quantiles
+pd.Series(Observations).describe()
+
+# We draw 3 samples of 100 units/measurements each
+SampleA = random.sample(Observations, 100)
+SampleB = random.sample(Observations, 100)
+SampleC = random.sample(Observations, 100)
+sns.histplot(SampleA, kde=True, color='r', alpha=0.3)
+sns.histplot(SampleB, kde=True, color='g', alpha=0.3)
+sns.histplot(SampleC, kde=True, color='b', alpha=0.3)
+
+# We create an Empirical Cumulative Distribution Function
+# for our observations
+from statsmodels.distributions.empirical_distribution import ECDF
+import matplotlib.pyplot as plt
+
+ecdf = ECDF(Observations)
+
+plt.plot(ecdf.x, ecdf.y)
+
+plt.axhline(y = 0.025, color = 'y', linestyle='-')
+plt.axvline(x = np.mean(Observations) - (2 * np.std(Observations)), color = 'y', linestyle='-')
+
+plt.axhline(y = 0.975, color = 'y', linestyle='-')
+plt.axvline(x = np.mean(Observations) + (2 * np.std(Observations)), color = 'y', linestyle='-')
+
+# Note that ecdf.y is an array of 100001 elements, equally spaced from 0 to 1!
+# Each step is 0.00001; the array goes from 0.0 to 1.0
+# Thus, ecdf.x is the mapping for each of the fixed ecdf.y values
+ecdf.y.shape # (100001,)
+np.min(np.argwhere(ecdf.y > 0.01)) # 0.001 * 100000 + 1 = 1001
+np.sum(np.linspace(0,1,num=100001)-ecdf.y) # 0
+
+# Threshold observation value
+# for which at least Y = 90% of the population
+# has that or a smaller observation value
+# Interpretation: 1-0.9 = 10% of the population sleeps longer than 9.18h
+y = int(0.9 * 100000) + 1
+ecdf.x[y]
+```
+
+
+### `12_Sampling_Distributions_NHANES.ipynb`
+
+This notebook shows how to create sampling dirstibutions with the NHANES dataset. However, note that sampling distributions are not usually created -- they are rather a theoretical concept. Additionally, the effect of changing the sample size is evaluated: variance decreases with larger sample sizes.
+
+```python
+%matplotlib inline
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import numpy as np
+
+da = pd.read_csv("nhanes_2015_2016.csv")
+
+# We extract 2x1000 subsamples from the NHANES dataset pairwise
+# each subsample has 100 units/measurements.
+# Pair means are compared.
+# The distribution of the differences refers to the error we could have expected
+# if two different researchers would have worked with only 100 participants
+# correctly selected (probability sampling)
+
+def compute_subsampling_differences(m):
+    # Array subsample mean differences
+    sbp_diff = []
+    for i in range(1000):
+        # Two subsamples of size m
+        # we get them together so that they are disjoint!
+        dx = da.sample(2*m)
+        dx1 = dx.iloc[0:m, :]
+        dx2 = dx.iloc[m:, :]
+        # Difference of mean BPXSY1 values
+        sbp_diff.append(dx1.BPXSY1.mean() - dx2.BPXSY1.mean())
+    return sbp_diff
+
+# Subsample size
+m = 100
+
+sbp_diff = compute_subsampling_differences(m=100)
+
+sns.histplot(sbp_diff, kde=True, bins=50)
+
+pd.Series(sbp_diff).describe()
+
+# 95% CI: standard error with 95% coverage
+np.std(sbp_diff)*2
+
+# Sample size is increased from 100 to 400
+# Error is expected to decrease!
+m = 400
+sbp_diff = compute_subsampling_differences(m=400)
+sns.histplot(sbp_diff, kde=True, bins=50)
+print(np.std(sbp_diff)*2)
+pd.Series(sbp_diff).describe()
+
+# We can repeat that in a loop for different sampling sizes
+sample_sizes = np.arange(1,500)
+stds = []
+for m in sample_sizes:
+    sbp_diff = compute_subsampling_differences(m=m)
+    stds.append(np.std(sbp_diff))
+
+# In general, we observe a quadratic/square-root relaton ship
+# An increase in K of the sample size leads to a decrease if the std dev in sqrt(K)
+plt.plot(sample_sizes,stds)
+
+# The same can be done not only with means, but with any other estimations
+# such as the (Pearson) correlation between twi variables.
+# When we 4x the sample size, the std dev correlation coeff decreases 2x (i.e., /2)
+# The model for the std dev of teh correlation is sqrt(2/m)
+for m in 100, 400:
+    sbp_diff = []
+    for i in range(1000):
+        dx = da.sample(2*m)
+        dx1 = dx.iloc[0:m, :]
+        dx2 = dx.iloc[m:, :]
+        r1 = np.corrcoef(dx1.loc[:, ["BPXSY1", "BPXDI1"]].dropna().T)
+        r2 = np.corrcoef(dx2.loc[:, ["BPXSY1", "BPXDI1"]].dropna().T)
+        sbp_diff.append(r1 - r2)
+    print("m=%d" % m, np.std(sbp_diff), np.sqrt(2 / m))  
+
+# According to the Central Limit Theorem,
+# the sampling distributions should tend to become normal
+# even if the original measurement distribution is not
+sns.histplot(da.BPXSY1.dropna(), kde=True, bins=50)
+
+# We compute 1000 sample means from samples with 50 measurements each
+# Plot the sampling distribution of the means
+# And the normal distribution with its mean & std dev
+m = 50
+sbp_mean = []
+for i in range(1000):
+    dx = da.sample(m)
+    sbp_mean.append(dx.BPXSY1.dropna().mean())
+sns.histplot(sbp_mean, kde=True, bins=50, stat='density')
+# Normal model is very similar to the distribution
+x = np.linspace(np.min(sbp_mean), np.max(sbp_mean), 100)
+from scipy.stats.distributions import norm
+y = norm.pdf(x, np.mean(sbp_mean), np.std(sbp_mean))
+plt.plot(x, y, color='orange')
+
+```
