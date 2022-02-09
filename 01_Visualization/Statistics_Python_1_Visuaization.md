@@ -86,7 +86,7 @@ Overview of contents:
       - Demo: Interactive Sampling Distribution
     - 9.2 Beyond Means: Sampling Distributions of Other Common Statistics
 10. Inference in Practice
-11. Python for **Sampling Distrubutions**
+11. Python for **Sampling Distributions**
 
 ## 1. What is Statistics?
 
