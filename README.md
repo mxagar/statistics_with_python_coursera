@@ -15,5 +15,12 @@ The folder `utils` contains some cheatsheets from [Datacamp](), not pushed to th
 - [Cheatsheet for SciPy](https://www.datacamp.com/community/blog/python-scipy-cheat-sheet#gs.JDSg3OI)
 - [Cheatsheet for Matplotlib](https://www.datacamp.com/community/blog/python-matplotlib-cheat-sheet#gs.uEKySpY)
 
+TODOs:
+- Move my old notes on statistics to here.
+- Add a summary notebook on statistics based on these two Medium articles
+  - [Statistics 1](https://medium.com/@jonathan-hui/statistics-i-in-data-science-machine-learning-40444379dd43)
+  - [Statistics 2](https://jonathan-hui.medium.com/statistics-ii-in-data-science-machine-learning-d3daad84dae4)
+
+
 Mikel Sagardia, 2022.
 No warranties.
