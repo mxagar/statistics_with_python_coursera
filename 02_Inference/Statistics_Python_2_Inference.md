@@ -15,6 +15,10 @@ No warranties.
 
 Overview of contents:
 1. Inference Procedures
+   - 1.1 Example: Choosing Between Two Bags: A or B?
+   - 1.2 Bayesian vs. Frequentist Statistics
+   - 1.3 Statistical Notation
+2. Python Lab
 
 ## 1. Inference Procedures
 
@@ -76,4 +80,19 @@ These two different reasoning might lead to different probabilities. We need to 
 - Prefer to use the term **standard error** to denote the true variability of a statistic, computed as its standard deviation.
 
 See the colocated file `./Notation_Definitions.pdf`.
+
+## 2. Python Lab: `./lab/01_PythonLab.ipynb`
+
+This notebook summarizes some of the concepts contained in the python lab of the second* course. These are very basic things, although in the course they're introduced as intermediate.
+
+It is supposed that these concepts build up on the concepts introduced in the previous first course.
+
+Overview:
+
+1. Lists vs. Numpy Arrays
+2. Dictionaries
+3. Functions
+4. Lambda Functions
+5. Reading Help Files
+6. Assessment Code
 
