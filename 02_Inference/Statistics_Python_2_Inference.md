@@ -18,7 +18,8 @@ Overview of contents:
    - 1.1 Example: Choosing Between Two Bags: A or B?
    - 1.2 Bayesian vs. Frequentist Statistics
    - 1.3 Statistical Notation
-2. Python Lab
+2. Python Lab: `./lab/01_PythonLab.ipynb` - Lists vs. Numpy Arrays, Dictionaries, (Lambda) Functions
+
 
 ## 1. Inference Procedures
 
@@ -81,7 +82,7 @@ These two different reasoning might lead to different probabilities. We need to 
 
 See the colocated file `./Notation_Definitions.pdf`.
 
-## 2. Python Lab: `./lab/01_PythonLab.ipynb`
+## 2. Python Lab: `./lab/01_PythonLab.ipynb` - Lists vs. Numpy Arrays, Dictionaries, (Lambda) Functions
 
 This notebook summarizes some of the concepts contained in the python lab of the second* course. These are very basic things, although in the course they're introduced as intermediate.
 
