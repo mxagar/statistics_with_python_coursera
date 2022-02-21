@@ -105,6 +105,8 @@ When working with confidence intervals, our values are reported in a range:
 
 `Best Estimate +- Margin of Error`
 
+The `Best Estimate` refers to the population, but is actually computed from the sample.
+
 The `Margin of Error = MoE` is defined as "a few" estimated standard errors; if we have a **significance** of `0.05`, i.e., a **confidence interval** of `95 %` which would cover `95 %` of the possible values, 
 
 `Margin of Error = 1.96 x SE`, with 
@@ -118,7 +120,7 @@ Example: a hospital polls toddler parents whether they use a car seat. The estim
 - `n = 659` parents sampled.
 - 540 responded 'yes'.
 
-Proportion: `p = 540 / 659 = 0.82`
+Proportion (sample): `p = 540 / 659 = 0.82`.
 
 **Standard error of a proportion**: `sigma = sqrt(p*(1-p)/n) = 0.014`
 
@@ -126,15 +128,15 @@ Proportion: `p = 540 / 659 = 0.82`
 
 Solution (note formulation): Based on our sample of 659 parents with toddlers, with 95% confidence, we estimate that between `0.82 +- 0.03 = [0.79, 0.85]` of their total population uses car seats.
 
-So, the sample is used to make an estimation of the population parameter!
+So, the sample is used to make an estimation of the population parameter! That's the magic of the confidence interval: while the best estimate refers to the sample, the region of confidence refers to the population.
 
 ### 3.2 Understanding Confidence Intervals
 
 Confidence intervals are used to report **population** estimates based on computations performed with a **sample** measurements.
 
-The `95% CI` is not `95%` the chance or probability of the population proportion being in that interval! Instead the `95% CI` relates to the level of confidence we have in the statistical procedure we used: if we draw samples and compute the CI with these procedure, the real paramater will be in the predicted range `95%` of the time!
+The `95% CI` is not `95%` the chance or probability of the population proportion being in that interval! Instead the `95% CI` relates to the level of confidence we have in the statistical procedure we used: if we draw samples and compute the CI with this procedure, the real parameter will be in the predicted range `95%` of the time!
 
-![Confidence intercel: interpretation](./pics/confidence_interval.png)
+![Confidence interval: interpretation](./pics/confidence_interval.png)
 
 The more confident we want to be, the larger the multiplier is, increasing the range we report.
 
@@ -156,7 +158,7 @@ If we are not sure if the sample is SRS we can take a larger or **conservative**
 
 Then, with a `95% CI` (`MoE = 0.05`), we have:
 
-`estimated p +- (1.96/2) * (1 / sqrt(n))`
+`estimated p +- (1.96) * (0.5 / sqrt(n))`
 
 which is approximately (cancelling 2):
 
@@ -175,3 +177,4 @@ We can further use that concept for computing the sample size required to have a
 `MoE = Z*(97%)/2 * 1 / sqrt(n)`
 `n = ((Z*(97%) / 2) / MoE)^2 = 1843.27`
 `-> n >= 1844`
+
