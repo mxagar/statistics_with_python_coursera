@@ -341,3 +341,24 @@ For the **pooled approach**, (1) the estimated standard error and (2) the df cha
 
 ![BMI means difference: CI interval computation for the pooled case](./pics/bmi_means_difference_result_pooled.png)
 
+Our example case is pooled:
+
+![BMI means difference: CI interval computation for the pooled case](./pics/bmi_means_difference_result_pooled_2.png)
+
+### Interpretation & Assumptions
+
+With 95% confidence, the difference of means of the two population groups is estimated to be between -0.385 and 1.865 kh/m^2.
+
+Since the value 0 is within the range, the is no significant difference between both groups. If we would repeat the measurements with the same method having different samples, 95% of the samples would contain the real difference mean; thus, since 0 is inside the region, there might be really no difference in the means!
+
+Assumptions:
+
+- We have a Simple Random Sample for each group
+- Groups are independent
+- Measurements have approximately a normal distribution: plot histogram + QQ-plots; even when the plots are not perfect, with large sample sizes we can accept that assumption. The perfect situation would be: bell-shaped historgram and points (at lest the most central ones) close to the normal line.
+- We need to check the standard deviations of the two groups: if they are very similar, we use the formulas for the pooled approach, else, the ones for the unpooled; recall two things change:
+  - The estimated standard error
+  - The df of the T distribution
+
+## 8. Other Inference Considerations
+
