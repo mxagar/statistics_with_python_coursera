@@ -97,7 +97,7 @@ Overview:
 5. Reading Help Files
 6. Assessment Code
 
-## 3. One Proportion
+## 3. Categorical Data: One Proportion
 
 ### 3.1 Estimating a Population Proportion with Confidence
 
@@ -105,13 +105,13 @@ When working with confidence intervals, our values are reported in a range:
 
 `Best Estimate +- Margin of Error`
 
-The `Best Estimate` refers to the population, but is actually computed from the sample.
+The `Best Estimate` refers to the population, but is actually computed from the sample: `p_hat`.
 
 The `Margin of Error = MoE` is defined as "a few" estimated standard errors; if we have a **significance** of `0.05`, i.e., a **confidence interval** of `95 %` which would cover `95 %` of the possible values, 
 
 `Margin of Error = 1.96 x SE`, with 
 
-`SE = Standard Error = Standard Deviation of our Sample`
+`SE = Standard Error = Standard Deviation of the Sample Proportion in the Sampling Distribution`. Note that this is not the standard deviation of the sample, but it is computed using it! The variance of the Bernoulli distribution is `p x (p-1)`. Thus the standard error is `SE = sqrt(Variance / n)`.
 
 `Z*(95%) = 1.96` (that "a few" multiplier)
 
@@ -120,9 +120,9 @@ Example: a hospital polls toddler parents whether they use a car seat. The estim
 - `n = 659` parents sampled.
 - 540 responded 'yes'.
 
-Proportion (sample): `p = 540 / 659 = 0.82`.
+Proportion (sample): `p_hat = 540 / 659 = 0.82`.
 
-**Standard error of a proportion**: `sigma = sqrt(p*(1-p)/n) = 0.014`
+**Standard error of a proportion**: `sigma = sqrt(p_hat x (1-p_hat)/n) = 0.014`
 
 `95 % CI = 1.96 x SE = 0.029`
 
@@ -154,7 +154,7 @@ We have the following assumptions:
 
 ### 3.4 Conservative Approach & Sample Size Consideration
 
-If we are not sure if the sample is SRS we can take a larger or **conservative** standard error as if the estimated proportion were `p = 0.5` (maximum standard deviation).
+If we are not sure if the sample is SRS we can take a larger or **conservative** standard error as if the estimated proportion were `p_hat = 0.5` (maximum standard deviation).
 
 Then, with a `95% CI` (`MoE = 0.05`), we have:
 
@@ -173,8 +173,171 @@ We can further use that concept for computing the sample size required to have a
 
 `MoE = 0.03`
 `Z*(99%) = 2.576`
-`p = 0.5`
+`p_hat = 0.5`
 `MoE = Z*(97%)/2 * 1 / sqrt(n)`
 `n = ((Z*(97%) / 2) / MoE)^2 = 1843.27`
 `-> n >= 1844`
+
+## 4. Categorical Data: Two Proportions
+
+Example: What is the difference in population proportions of parents reporting that their children age 6-18 have had swimming lessons, between white children and black children?
+
+Pupulation: all parents with white children and all parents with black children.
+
+Our parameter of interest is the different in population proportions: `p1 (white) - p2 (black)`; we want to compute the best estimate and its `95% CI`.
+
+Collected data:
+- Sample black: 247; 91 had swimming lessons.
+- Sample white: 988; 543 had swimming lessons.
+
+Formula:
+
+`Best Estimate +- Margin of Error`
+
+`Best Estimate = p_1_hat - p_2_hat`
+
+`Margin of Error = Z*(95%) x SE(p_1_hat - p_2_hat)`
+
+`Z*(95%) = 1.96`
+
+`SE(p_1_hat - p_2_hat) = sqrt((p_1_hat x (1 - p_1_hat))/(n_1) + (p_2_hat x (1 - p_2_hat))/(n_2))`: The Standard Error of a difference of proportions is the sum of the variances square-rooted.
+
+Result:
+
+`p_1_hat = 0.55`
+
+`p_2_hat = 0.37`
+
+Thus: `0.18 +- 0.0677 = (0.1123, 0.2477)`.
+
+### Interpretation & Assumptions
+
+With 95% confidence, the population proportion of parents with white children who have taken swimming lessons is 11.23% to 24.77% higher than the population of parents with black children who have taken swimming lessons.
+
+**If 0 is contained in the interval, we cannot say there are differences**; since in our case 0 is not in the interval, we can say that both proportions are different!
+
+Assumptions:
+- We have two independent random samples.
+- We have large enough samples: we need to have at least 10 measurements for each of the 4 categories (black-yes, black-no, white-yes, white-no).
+
+## 5. Quantitative Data: One Mean -- Estimating Population Mean with Confidence
+
+Example (Cartwheel dataset): What is the **average** cartwheel distance (in inches) for adults? (distance from the forward foot before performing the cartwheel to the final foot after performing it).
+
+Population: all adults.
+Parameter of interest: population mean Cartwheel distance.
+Sample size: 25.
+
+We want to construct a `95% CI`.
+
+Even though the data is not normally distributed (see QQ-plots and historgram in figure), we can still compute the `95% CI` if we fulfill our regular assumptions: (1) independent random collection of measurements, (2) large enough sample size.
+
+![Cartwheel distance: diagrams](./pics/cartwheel_distance_diagrams.png)
+
+The descriptive summary variables are used:
+
+![Cartwheel distance: summary](./pics/cartwheel_distance_summary.png)
+
+`Best estimate +- Margin of Error`
+
+`Best estimate = Mean(Sample Measurements)`
+
+`Margin of Error = T*(95%, n= 25) x Estimated SE`
+
+`Estimated SE = Estimated Standard Error = sqrt(Estimated Variance / n) = StdDev(Sample Measurements) / sqrt(n)`. Note that the standard error is the spread of the sampling distribution, i.e., the error of the sample in the sampling distribution of samples. Our estimated value is computed by taking the measurements of our sample.
+
+`T*(95%, n= 25)` is the multiplier, as before; in this case, instead of using the normal/standard distribution, we take the **Student's T Distribution**. This distribution depends on the sample size used. That variable is called **degree of freedom** (df).
+
+`95% CI`
+
+`n = 25 -> T*(95%, df = n=25) = 2.064`
+
+`n = 1000 -> T*(95%, df = n=1000) = 1.962`
+
+The T Distribution approximates to the normal distribution as the sample size increases.
+
+Computing all terms:
+
+![Cartwheel: confidence interval](./pics/cartwheel_distance_interval.png)
+
+### Interpretation
+
+With 95% confidence, the population mean cartwheel distance for all adults is estimated to be between 76.26 and 88.70 inches.
+
+Recall the confidence refers to our procedure: if we repeat the measurements with different samples using the same methods, 95% of the intervals will contain the real mean!
+
+## 6. Quantitative Data: Two Means -- Estimating a Mean Difference for Paired Data
+
+**Paired data** arises when collected measurements are related, e.g.:
+
+- Pre and post treatment measurements on the same subjects
+- Measurements of twins
+- Measurements of family members
+- Measurements within the same lot/batch of production
+- etc.
+
+Example: What is the average difference between the older twin's and younger twin's self-reported education?
+
+Population: all identical twins.
+Parameter of interest: population mean difference of self-reported education.
+
+We want to construct a `95% CI` fort he mean difference.
+
+We have the following data:
+
+![Twins: Education differences](./pics/twins_education_differences.png)
+
+The formulas is the same as before, but we use the difference as the measurement, often notes with subscript `d`. Thus, the mean of the differences is taken and the standard deviation of the differences is used:
+
+![Twins: Education differences CI](./pics/twins_education_differences_interval.png)
+
+`Best Estimate +- Margin of Error`
+
+`mean(differences) +- T*(95%, df = n) x (std(differences) / sqrt(n))`
+
+Result:
+
+`0.084 +- 0.0814 = (0.0025, 0.1652)`
+
+### Interpretation & Assumptions
+
+With 95% confidence, the population mean difference between the two paired groups is estimated to be between 0.0025 and 0.1652 years.
+
+Since the reasonable range is on the positive side (i.e., 0 not contained), we conclude that the older twins have more education years on average. However, note that the interval almost contains 0. The key idea is that we need to check whether the 0 value is inside the range.
+
+Assumptions:
+- Random sample of identical twins.
+- Population differences normal or large enough sample size.
+
+## 7. Quantitative Data: Two Means -- Estimating a Mean Difference for Independent Groups
+
+Now, we don't have paired data, but measurements of two unrelated groups.
+
+Example: Do male and female BMI means differ significantly for the USA mexican-american adutls age 18-29? BMI = body mass index = kg/m^2.
+
+Population: all male & female mexican-american adults age 18-29 in the USA.
+Parameter of interest: difference of BMI means: `mu_1 - mu_2`.
+
+Data summary:
+
+![BMI means difference](./pics/bmi_means_difference.png)
+
+In general, we have two approaches:
+
+1. The pooled approach: the standard deviations of the two population groups are assumed to be equal.
+2. The unpooled approach: the standard deviations of the two population groups are assumed to **not** be equal.
+
+Formulas for the **unpooled approach**:
+
+`Best estimate +- Margin of Error`
+
+`Best estimate = Difference Means = mean(Group 1) - mean(Group 2)`
+
+`Margin of Error = T*(95%, df = min(n_1-1, n_2-1)) x Estimated SE`
+
+`Estimated SE = sqrt(std(Group 1)^2 / n_1 + std(Group 2)^2 / n_2)`
+
+For the **pooled approach**, (1) the estimated standard error and (2) the df change:
+
+![BMI means difference: CI interval computation for the pooled case](./pics/bmi_means_difference_result_pooled.png)
 
