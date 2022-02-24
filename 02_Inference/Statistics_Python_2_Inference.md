@@ -111,9 +111,13 @@ The `Margin of Error = MoE` is defined as "a few" estimated standard errors; if 
 
 `Margin of Error = 1.96 x SE`, with 
 
-`SE = Standard Error = Standard Deviation of the Sample Proportion in the Sampling Distribution`. Note that this is not the standard deviation of the sample, but it is computed using it! The variance of the Bernoulli distribution is `p x (p-1)`. Thus the standard error is `SE = sqrt(Variance / n)`.
+`SE = Standard Error = Standard Deviation of the Sample Proportion in the Sampling Distribution`. Note that:
 
-`Z*(95%) = 1.96` (that "a few" multiplier)
+- `SE` is not the standard deviation of the sample, but the standard deviation of the sampling distribution. However, it is computed using the standard deviation of our sample!
+- The variance of the Bernoulli distribution is `p x (p-1)`.
+- Thus the standard error or a proportion estimate is `SE = sqrt(Variance of sample / n sample)`.
+
+`Z*(95%) = 1.96`: that "a few" multiplier = Z value in the normal distribution to cover 95% of the density area.
 
 Example: a hospital polls toddler parents whether they use a car seat. The estimated parameter is the proportion of parents who use a car seat. Data:
 
@@ -132,7 +136,7 @@ So, the sample is used to make an estimation of the population parameter! That's
 
 ### 3.2 Understanding Confidence Intervals
 
-Confidence intervals are used to report **population** estimates based on computations performed with a **sample** measurements.
+Confidence intervals are used to report **population** estimates based on computations performed with **sample** measurements.
 
 The `95% CI` is not `95%` the chance or probability of the population proportion being in that interval! Instead the `95% CI` relates to the level of confidence we have in the statistical procedure we used: if we draw samples and compute the CI with this procedure, the real parameter will be in the predicted range `95%` of the time!
 
@@ -200,7 +204,7 @@ Formula:
 
 `Z*(95%) = 1.96`
 
-`SE(p_1_hat - p_2_hat) = sqrt((p_1_hat x (1 - p_1_hat))/(n_1) + (p_2_hat x (1 - p_2_hat))/(n_2))`: The Standard Error of a difference of proportions is the sum of the variances square-rooted.
+`SE(p_1_hat - p_2_hat) = sqrt((p_1_hat x (1 - p_1_hat))/(n_1) + (p_2_hat x (1 - p_2_hat))/(n_2))`: The Standard Error of a difference of proportions is the sum of the variances (divided by the sample size of each group), square-rooted.
 
 Result:
 
@@ -244,15 +248,15 @@ The descriptive summary variables are used:
 
 `Margin of Error = T*(95%, n= 25) x Estimated SE`
 
-`Estimated SE = Estimated Standard Error = sqrt(Estimated Variance / n) = StdDev(Sample Measurements) / sqrt(n)`. Note that the standard error is the spread of the sampling distribution, i.e., the error of the sample in the sampling distribution of samples. Our estimated value is computed by taking the measurements of our sample.
+`Estimated SE = Estimated Standard Error = sqrt(Estimated Variance / n) = StdDev(Sample Measurements) / sqrt(n sample)`. Note that the standard error is the spread of the sampling distribution, i.e., the error of the sample in the sampling distribution of samples. Our estimated value is computed by taking the measurements of our sample.
 
-`T*(95%, n= 25)` is the multiplier, as before; in this case, instead of using the normal/standard distribution, we take the **Student's T Distribution**. This distribution depends on the sample size used. That variable is called **degree of freedom** (df).
+`T*(95%, df = n-1 = 24)` is the multiplier, as before; in this case, instead of using the normal/standard distribution, we take the **Student's T Distribution**. This distribution depends on the sample size used. That variable is called **degree of freedom** (df).
 
 `95% CI`
 
-`n = 25 -> T*(95%, df = n=25) = 2.064`
+`n = 25 -> T*(95%, df = n-1 = 24) = 2.064`
 
-`n = 1000 -> T*(95%, df = n=1000) = 1.962`
+`n = 1000 -> T*(95%, df = n-1 = 999) = 1.962`
 
 The T Distribution approximates to the normal distribution as the sample size increases.
 
@@ -293,7 +297,7 @@ The formulas is the same as before, but we use the difference as the measurement
 
 `Best Estimate +- Margin of Error`
 
-`mean(differences) +- T*(95%, df = n) x (std(differences) / sqrt(n))`
+`mean(differences) +- T*(95%, df = n-1) x (std(differences) / sqrt(n))`
 
 Result:
 
@@ -362,3 +366,65 @@ Assumptions:
 
 ## 8. Other Inference Considerations
 
+### 8.1 Confidence Intervals
+
+The purpose of a confidence interval is to cover a **population parameter** with high probability. We have the **lower confidence bound** (LCB) and the **upper confidence bound** (UCB), such that for a `CI 95%`:
+
+`P(LCB <= parameter <= UCB) = 0.95`
+
+If we repeat the sample measurements with the same method, the sought parameter will be in the CI 95% of the time. However, note that:
+
+- If we have low power and high uncertainty, that CI might be too large to convey meaningful data
+- If we do not fulfill the assumptions, the real parameter might outside from that CI
+- 95% does not refer to the current sample, but to the method
+
+The confidence interval has this general form:
+
+`Best Estimate +- Margin of Error`
+`Parameter of the Sample +- K x Estimated Standard Error`
+`Estimated Standard Error = sqrt(Variance of Sample / Sample Size)`
+`K: T* or Z* values for 95% or the selected significance: a value between 1.96 and 2.5`
+
+There is no rule on the sample size, but
+
+- if we have categorical data, at least 10 instances of each need to be covered
+- if we have quantitative data, we need to have a bell-shaped distribution; it doesn't need to be normal, but at least bell-shaped and a QQ-plot should have its central points close to the line
+
+As far as I understand, the bell-shape/normality assumption is due to the fact that the sampling standard error is **estimated** using the variance or standard deviation of the sample. If the sample distribution is not bell-shaped, it won't yield standard deviation characteristic of a bell-shaped distribution; thus, using it to compute the standard error of the the sampling distribution (which is expected to be normal according to the Central Limit Theorem (CLT)), would be misleadingly.
+
+### 8.2 Challenging Cases: What Should We Do if the Sample Distribution is not Bell-Shaped?
+
+1. Categorical data: **Agresti-Coull interval: add two extra values to each category before calculating the proportion**. For instance, if we have 15 yes and 17 no, then: the proportion would be (15 + 2) / (15 + 2 + 17 + 2). This applies to the proportion and the standard error computation.
+2. Quantitative data: If the distribution keeps far from a bell shape even with more measurements, **apply a transformation, for instance `log()`**, which transforms the distribution to be more normal. Compute LCB & UCB and undo the transformation (`exp()`, in the example) of these bounds.
+
+### 8.3 Question for the Forum
+
+#### Question 1: Multiplier for the Margin of Error: T or Z?
+
+In week 2, the multiplier for the computation of the margin of error is different depending on the parameter. For proportions, the standard distribution Z is used, whereas for means the Student's T distribution is employed. Shouldn't we rather use always the T distribution?
+
+The reason behind is that the sample size regulates the correct choice: if n is small, T is correct; if n is large, T tends to become Z, so T is still correct.
+
+#### Question 2: Why Should the Sample Distribution Be Bell-Shaped?
+
+In week 2, a strong emphasis is done in the need of having bell-shaped sample distributions for quantitative data for which mean confidence intervals are to be computed.
+
+However, it is not clearly explained why. That need of quasi-normality is specially confusing, because the Central Limit Theorem (CLT) doesn't require the sample measurement distribution to be normal fo rit to hold -- no matter the underlying population/samples distributions, the sampling distribution will tend to be normal.
+
+Along this lines, my interpretation of the need of the bell-shape/normality assumption is the following:
+
+The sampling standard error is **estimated** using the variance or standard deviation of the sample. If the sample distribution is not bell-shaped, it won't yield standard deviation characteristic of a bell-shaped distribution; thus, using it to compute the standard error of the the sampling distribution (which is expected to be normal according to the Central Limit Theorem (CLT)), would be misleadingly.
+
+Is that correct?
+
+### 8.2 What Affects the Standard Error of An Estimate?
+
+The Standard Error of an estimate is an estimate of the standard deviation of the sampling distribution. Thus, smaller standard errors are associated with more precise ranges for the estimate.
+
+The following factors affect the standard error (the more precise we want it, the more expensive it becomes):
+
+1. The **variance of the variables of interest**: the more, the less precise. Thus, precise measurements are encouraged.
+2. The **sample size**. The larger, the more precise. However, outliers might appear, affecting the data.
+3. The amount of **dependence in the observations, possibly due to cluster sampling**. Measurements of subjects that belong to an underlying group are not independent anymore, which reduces the effective sample size; the same happens with repeated measures along the time in longitudinal studies. Thus, the standard error increases. We need to increase the number of clusters instead of the number or measurements in each cluster to decrease the standard error.
+4. The **stratification of the target sample**: stratifying during analysis reduces total variance, because we are removing the between-strata variance.
+5. The use of **sampling weights** to compute our estimates. Sometimes we need weights to compute unbiased population estimates. But when the variability of the weights is high, the parameter variance increases.
