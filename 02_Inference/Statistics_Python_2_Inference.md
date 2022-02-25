@@ -19,7 +19,30 @@ Overview of contents:
    - 1.2 Bayesian vs. Frequentist Statistics
    - 1.3 Statistical Notation
 2. Python Lab: `./lab/01_PythonLab.ipynb` - Lists vs. Numpy Arrays, Dictionaries, (Lambda) Functions
-
+3. Categorical Data: One Proportion
+   - 3.1 Estimating a Population Proportion with Confidence
+   - 3.2 Understanding Confidence Intervals
+   - 3.3 Assumptions for a Single Population Proportion Confidence Interval
+   - 3.4 Conservative Approach & Sample Size Consideration
+4. Categorical Data: Two Proportions
+   - Interpretation & Assumptions
+5. Quantitative Data: One Mean -- Estimating Population Mean with Confidence
+   - Interpretation
+6. Quantitative Data: Two Means -- Estimating a Mean Difference for Paired Data
+   - Interpretation & Assumptions
+7. Quantitative Data: Two Means -- Estimating a Mean Difference for Independent Groups
+   - Interpretation & Assumptions
+8. Other Inference Considerations
+   - 8.1 Confidence Intervals
+   - 8.2 Challenging Cases: What Should We Do if the Sample Distribution is not Bell-Shaped?
+   - 8.3 Question for the Forum
+     - Question 1: Multiplier for the Margin of Error: T or Z?
+     - Question 2: Why Should the Sample Distribution Be Bell-Shaped?
+   - 8.4 What Affects the Standard Error of An Estimate?
+9. Python Lab
+   - `./lab/02_ConfidenceIntervals_Examples.ipynb`
+   - `./lab/03_ConfidenceIntervals_NHANES_Practice.ipynb`
+   - `./lab/04_Assessment_ToddlersNap_ConfidenceIntervals.ipynb`
 
 ## 1. Inference Procedures
 
@@ -154,7 +177,7 @@ Some insights after playing with the [Chapter 4: Frequentist Inference - Section
 We have the following assumptions:
 
 - We have a **simple random sample (SRS)**: a representative subset of the population made by observations/subjects that have equal probability of being chosen. To check that, analyze how the data was collected and consider at least whether the sample is representative.
-- We need to have a **large enough sample size**; that way, the distribution of sample proportions will tend to be normal. By convention, large enough is considered to be at least 10 observations of each class/category; example with car set usage: at least 10 "yes" and at least 10 "no".
+- We need to have a **large enough sample size**; that way, the distribution of sample proportions will tend to be normal. By convention, large enough is considered to be at least 10 observations of each class/category; example with car seat usage: at least 10 "yes" and at least 10 "no".
 
 ### 3.4 Conservative Approach & Sample Size Consideration
 
@@ -186,7 +209,7 @@ We can further use that concept for computing the sample size required to have a
 
 Example: What is the difference in population proportions of parents reporting that their children age 6-18 have had swimming lessons, between white children and black children?
 
-Pupulation: all parents with white children and all parents with black children.
+Population: all parents with white children and all parents with black children.
 
 Our parameter of interest is the different in population proportions: `p1 (white) - p2 (black)`; we want to compute the best estimate and its `95% CI`.
 
@@ -417,7 +440,7 @@ The sampling standard error is **estimated** using the variance or standard devi
 
 Is that correct?
 
-### 8.2 What Affects the Standard Error of An Estimate?
+### 8.4 What Affects the Standard Error of An Estimate?
 
 The Standard Error of an estimate is an estimate of the standard deviation of the sampling distribution. Thus, smaller standard errors are associated with more precise ranges for the estimate.
 
@@ -428,3 +451,153 @@ The following factors affect the standard error (the more precise we want it, th
 3. The amount of **dependence in the observations, possibly due to cluster sampling**. Measurements of subjects that belong to an underlying group are not independent anymore, which reduces the effective sample size; the same happens with repeated measures along the time in longitudinal studies. Thus, the standard error increases. We need to increase the number of clusters instead of the number or measurements in each cluster to decrease the standard error.
 4. The **stratification of the target sample**: stratifying during analysis reduces total variance, because we are removing the between-strata variance.
 5. The use of **sampling weights** to compute our estimates. Sometimes we need weights to compute unbiased population estimates. But when the variability of the weights is high, the parameter variance increases.
+
+## 9. Python Lab
+   
+I completed three notebooks during the python lab sessions:
+
+- `./lab/02_ConfidenceIntervals_Examples.ipynb`: **most important notebook**. Examples of the theory are constructed.
+- `./lab/03_ConfidenceIntervals_NHANES_Practice.ipynb`: this notebook uses the methods from the previous one.
+- `./lab/04_Assessment_ToddlersNap_ConfidenceIntervals.ipynb`: notebook of the week 2 assessment; it uses the techniques from the previous notebooks.
+
+In the following, the most important notebook is summarized.
+
+### `./lab/02_ConfidenceIntervals_Examples.ipynb`
+
+This notebook collects practical exercises of the concepts introduced in the course videos. I extended the notebook with relevant material not included in the course.
+
+**Not all sections are summarized -- the reader should open and look at the notebook!**
+**In particular, sections related to two proportion/means comparisons are missing here.**
+These sections build up on the ones shown here.
+
+Overview of contents:
+
+1. Definitions
+2. Personal Notes: Using Distributions with Scipy - PDFs, CDFs
+    - 2.1 List of Functions to Handle Distributions
+    - 2.2 PDFs and CDFs: Examples
+3. CI of One Proportion
+    - Manual
+    - With Statsmodels
+4. CI of One Mean
+    - QQ-Plot to Check Normality
+    - Manual
+    - With Statsmodels
+5. **Cleaning and Preparing Datasets (for Two Groups): `crosstab`, `groupby.agg`**
+6. CI of Two Proportions: Smokers vs Non-Smokers in Males & Females
+    - Manual
+    - With Statsmodels (One Proportion)
+    - 6.1 Confidence Intervals for Subpopulations: Age Stratification
+7. CI of Two Means (Independent Data): BMI mean in Males & Females
+    - QQ-Plot to Check Normality
+    - Manual
+    - With Statsmodels (One Mean)
+    - 7.1 Confidence Intervals for Subpopulations: Age Stratification
+    - 7.2 Confidence Intervals and Samples Size
+
+```python
+
+#### ---  2. Personal Notes: Using Distributions with Scipy - PDFs, CDFs
+
+from scipy.stats import norm,t
+
+dist = norm(mean, std)
+dist = t(df=n-1)
+
+dist.rvs(N) # N random variables of the distribution
+dist.pmf(x) # Probability Mass Function at values x for discrete distributions
+dist.pdf(x) # Probability Density Function at values x for continuous distributions
+dist.cdf(x) # Cumulative Distribution Function at values x for any distribution
+dist.ppf(q) # Percent point function (inverse of `cdf`) at q (% of accumulated area) of the given RV
+
+# Confidence 95% (n=10) -> significance level alpha = 0.05
+# Since we have two sides, we need to consider: alpha/2 = 0.05/2
+# Thus, the percentage we look is: 1 - alpha/2 = 0.975
+T_star_95 = t(df=n-1).ppf(0.975)
+
+#### ---  3. CI of One Proportion
+
+import numpy as np
+
+# T*: See above, on more notes on how to compute it with scipy
+#T_star_95 = 1.96
+from scipy.stats import norm,t
+T_star_95 = t(df=n-1).ppf(0.975)
+# Sample size
+n = 659.0
+# Proportion
+p = 540.0/n
+# Standard Error
+se = np.sqrt((p * (1 - p))/n)
+
+# Lower and Upper Bounds
+lcb = p - T_star_95 * se
+ucb = p + T_star_95 * se
+
+# With Statsmodels
+import statsmodels.api as sm
+sm.stats.proportion_confint(n * p, n)
+
+#### ---  4. CI of One Mean
+
+from matplotlib import pyplot as plt
+import numpy as np
+import pandas as pd
+import scipy.stats as stats
+import seaborn as sns
+%matplotlib inline
+
+df = pd.read_csv("Cartwheeldata.csv")
+
+## QQ-Plot: Normality Check
+stats.probplot(df["CWDistance"], dist="norm", plot=plt)
+
+# Mean, std, n
+mean = df["CWDistance"].mean()
+sd = df["CWDistance"].std()
+n = len(df)
+
+# T*, Standard Error
+#T_star_95 = 2.064
+from scipy.stats import norm,t
+T_star_95 = t(df=n-1).ppf(0.975)
+se = sd/np.sqrt(n)
+
+# Lower and Upper Bounds
+lcb = mean - T_star_95 * se
+ucb = mean + T_star_95 * se
+
+# With Statsmodels
+sm.stats.DescrStatsW(df["CWDistance"]).zconfint_mean()
+
+#### ---  5. Cleaning and Preparing Datasets (for Two Groups): `crosstab`, `groupby.agg`
+
+# For comparisons of two proportions / means, often cleaning and grouping is necessary
+
+da = pd.read_csv("nhanes_2015_2016.csv")
+
+# Recode SMQ020 from 1/2 to Yes/No into new variable SMQ020x
+da["SMQ020x"] = da.SMQ020.replace({1: "Yes", 2: "No", 7: np.nan, 9: np.nan})
+# Recode RIAGENDR from 1/2 to Male/Female into new variable RIAGENDRx
+da["RIAGENDRx"] = da.RIAGENDR.replace({1: "Male", 2: "Female"})
+
+# Cross-Table: Very useful for counting/frequencies of different groups
+dx = da[["SMQ020x", "RIAGENDRx"]].dropna()
+pd.crosstab(dx.SMQ020x, dx.RIAGENDRx)
+
+# Recode (again) SMQ020x from Yes/No to 1/0 into existing variable SMQ020x
+# We recode is again because with 1/0, the mean yields the proportion :)
+dx["SMQ020x"] = dx.SMQ020x.replace({"Yes": 1, "No": 0})
+
+# Group By + Aggregate: Very Useful for porportionas and means of different groups
+# groupby().agg() creates a new table with aggregated summary values
+# in groupby we say which category groups we want in the rows
+# and with agg() we say the aggregate function to be applied in the columns
+dy = dx.groupby("RIAGENDRx").agg({"SMQ020x": [np.mean, np.size]})
+dy.columns = ["Proportion", "n"]
+
+dz = da.groupby("RIAGENDRx").agg({"BMXBMI": [np.mean, np.std, np.size]})
+dz.columns = ["BMI_mean", "BMI_std", "BMI_n"]
+
+
+```
