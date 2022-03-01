@@ -19,30 +19,31 @@ Overview of contents:
    - 1.2 Bayesian vs. Frequentist Statistics
    - 1.3 Statistical Notation
 2. Python Lab: `./lab/01_PythonLab.ipynb` - Lists vs. Numpy Arrays, Dictionaries, (Lambda) Functions
-3. Categorical Data: One Proportion
+3. Confidence Intervals -- Categorical Data: One Proportion
    - 3.1 Estimating a Population Proportion with Confidence
    - 3.2 Understanding Confidence Intervals
    - 3.3 Assumptions for a Single Population Proportion Confidence Interval
    - 3.4 Conservative Approach & Sample Size Consideration
-4. Categorical Data: Two Proportions
+4. Confidence Intervals -- Categorical Data: Two Proportions
    - Interpretation & Assumptions
-5. Quantitative Data: One Mean -- Estimating Population Mean with Confidence
+5. Confidence Intervals -- Quantitative Data: One Mean -- Estimating Population Mean with Confidence
    - Interpretation
-6. Quantitative Data: Two Means -- Estimating a Mean Difference for Paired Data
+6. Confidence Intervals -- Quantitative Data: Two Means -- Estimating a Mean Difference for Paired Data
    - Interpretation & Assumptions
-7. Quantitative Data: Two Means -- Estimating a Mean Difference for Independent Groups
+7. Confidence Intervals -- Quantitative Data: Two Means -- Estimating a Mean Difference for Independent Groups
    - Interpretation & Assumptions
-8. Other Inference Considerations
+8. Confidence Intervals -- Other Inference Considerations
    - 8.1 Confidence Intervals
    - 8.2 Challenging Cases: What Should We Do if the Sample Distribution is not Bell-Shaped?
    - 8.3 Question for the Forum
      - Question 1: Multiplier for the Margin of Error: T or Z?
      - Question 2: Why Should the Sample Distribution Be Bell-Shaped?
    - 8.4 What Affects the Standard Error of An Estimate?
-9. Python Lab
+9. Confidence Intervals -- Python Lab
    - `./lab/02_ConfidenceIntervals_Examples.ipynb`
    - `./lab/03_ConfidenceIntervals_NHANES_Practice.ipynb`
    - `./lab/04_Assessment_ToddlersNap_ConfidenceIntervals.ipynb`
+10. Hypothesis Testing -- 
 
 ## 1. Inference Procedures
 
@@ -120,7 +121,7 @@ Overview:
 5. Reading Help Files
 6. Assessment Code
 
-## 3. Categorical Data: One Proportion
+## 3. Confidence Intervals -- Categorical Data: One Proportion
 
 ### 3.1 Estimating a Population Proportion with Confidence
 
@@ -205,7 +206,7 @@ We can further use that concept for computing the sample size required to have a
 `n = ((Z*(97%) / 2) / MoE)^2 = 1843.27`
 `-> n >= 1844`
 
-## 4. Categorical Data: Two Proportions
+## 4. Confidence Intervals -- Categorical Data: Two Proportions
 
 Example: What is the difference in population proportions of parents reporting that their children age 6-18 have had swimming lessons, between white children and black children?
 
@@ -247,7 +248,7 @@ Assumptions:
 - We have two independent random samples.
 - We have large enough samples: we need to have at least 10 measurements for each of the 4 categories (black-yes, black-no, white-yes, white-no).
 
-## 5. Quantitative Data: One Mean -- Estimating Population Mean with Confidence
+## 5. Confidence Intervals -- Quantitative Data: One Mean -- Estimating Population Mean with Confidence
 
 Example (Cartwheel dataset): What is the **average** cartwheel distance (in inches) for adults? (distance from the forward foot before performing the cartwheel to the final foot after performing it).
 
@@ -293,7 +294,7 @@ With 95% confidence, the population mean cartwheel distance for all adults is es
 
 Recall the confidence refers to our procedure: if we repeat the measurements with different samples using the same methods, 95% of the intervals will contain the real mean!
 
-## 6. Quantitative Data: Two Means -- Estimating a Mean Difference for Paired Data
+## 6. Confidence Intervals -- Quantitative Data: Two Means -- Estimating a Mean Difference for Paired Data
 
 **Paired data** arises when collected measurements are related, e.g.:
 
@@ -336,7 +337,7 @@ Assumptions:
 - Random sample of identical twins.
 - Population differences normal or large enough sample size.
 
-## 7. Quantitative Data: Two Means -- Estimating a Mean Difference for Independent Groups
+## 7. Confidence Intervals -- Quantitative Data: Two Means -- Estimating a Mean Difference for Independent Groups
 
 Now, we don't have paired data, but measurements of two unrelated groups.
 
@@ -387,8 +388,11 @@ Assumptions:
   - The estimated standard error
   - The df of the T distribution
 
-## 8. Other Inference Considerations
+## 8. Confidence Intervals -- Other Inference Considerations
 
+**Important notes**
+- For proportions, we use the Z distribution (normal, standard: `Z = N(0,1)`).
+- For means, we use the T distribution (Stundent's).
 ### 8.1 Confidence Intervals
 
 The purpose of a confidence interval is to cover a **population parameter** with high probability. We have the **lower confidence bound** (LCB) and the **upper confidence bound** (UCB), such that for a `CI 95%`:
@@ -428,6 +432,32 @@ In week 2, the multiplier for the computation of the margin of error is differen
 
 The reason behind is that the sample size regulates the correct choice: if n is small, T is correct; if n is large, T tends to become Z, so T is still correct.
 
+##### Answer
+
+Hi Mikel :)
+
+Let me make sure that I understand your correctly...
+
+If we want to calculate a CI for a proportion, for example, you're asking why we don't use the t-distribution all of the time, instead of switching to the z-distribution as the sample size become large?
+
+If that's what you're asking, then I have to confess that I'd not heard of this before.  I've only used the z-distribution approximation with proportions, never the t-distribution.
+
+I think that the primary reason for this is that with proportions, the distribution of the estimate does not "pass through" the t-distribution on its way to the z-distribution.  That's not the way the theory works.
+
+That said, the sample sizes and the proportion *definitely* impact the performance of the z-distribution approximation.  Here is a great paper on the topic.  (and it might address your question more fully as well)
+
+https://projecteuclid.org/journals/statistical-science/volume-16/issue-2/Interval-Estimation-for-a-Binomial-Proportion/10.1214/ss/1009213286.full
+
+But I looked around a bit and did find that some textbooks and perhaps some disciplines use the t-distribution instead of the z-distribution as a sort of "hedge" against those approximation performance concerns.  One learns something new every day!
+
+However, I never found an explanation of why or when the t-distribution is a better choice.  Doesn't mean that there isn't one.  I just couldn't find anything.  Do you have something?
+
+I actually think that using the t-distribution with proportions might be well-intentioned (to address the approximation performance issue or coverage performance issue) but it is not really appropriate as it lacks a theory underpinning.  What I have seen instead is using some of the other intervals described in the paper.
+
+Sorry if I've misunderstood again.  Let me know if this is helpful or not!
+
+Best, Brian
+
 #### Question 2: Why Should the Sample Distribution Be Bell-Shaped?
 
 In week 2, a strong emphasis is done in the need of having bell-shaped sample distributions for quantitative data for which mean confidence intervals are to be computed.
@@ -439,6 +469,27 @@ Along this lines, my interpretation of the need of the bell-shape/normality assu
 The sampling standard error is **estimated** using the variance or standard deviation of the sample. If the sample distribution is not bell-shaped, it won't yield standard deviation characteristic of a bell-shaped distribution; thus, using it to compute the standard error of the the sampling distribution (which is expected to be normal according to the Central Limit Theorem (CLT)), would be misleadingly.
 
 Is that correct?
+
+##### Answer
+
+Hi Mikel :)
+
+No worries! Sorry that I misunderstood the first time.
+
+The sample distribution - literally the distribution of data in our sample - does *not* have to be normal/bell shaped.  It should roughly reflect the population distribution, whatever that is.
+
+Now there is truth that a sample from a normal population distribution will be normal as well, even before we consider the CLT.  So the closer that the data are to normal/symmetrical the more efficient the CLT support for the "distribution of the sample means" (aka the sampling distribution) being normal.
+
+But the sample data don't *have* to be normal/bell shaped or come from a normal population.  The CLT still works with a large sample  size even when the data are most definitely not normal.
+
+That said, extreme skew or outliers can influence results, especially with regression. Which is one reason why someone might perform a transform on the sample data to something more "normal" before analysis.  Sometimes people confuse this to mean that the data *need* to be normal.
+
+I do have a reference that is more eloquent that I am about all this.  Could you tell me if it speaks to your question?   And apologies if I've misunderstood again!
+
+http://courses.washington.edu/b511/handouts/Lumley%20Normality%20Assumption.pdf
+
+Best, Brian
+
 
 ### 8.4 What Affects the Standard Error of An Estimate?
 
@@ -452,7 +503,7 @@ The following factors affect the standard error (the more precise we want it, th
 4. The **stratification of the target sample**: stratifying during analysis reduces total variance, because we are removing the between-strata variance.
 5. The use of **sampling weights** to compute our estimates. Sometimes we need weights to compute unbiased population estimates. But when the variability of the weights is high, the parameter variance increases.
 
-## 9. Python Lab
+## 9. Confidence Intervals -- Python Lab
    
 I completed three notebooks during the python lab sessions:
 
@@ -599,5 +650,135 @@ dy.columns = ["Proportion", "n"]
 dz = da.groupby("RIAGENDRx").agg({"BMXBMI": [np.mean, np.std, np.size]})
 dz.columns = ["BMI_mean", "BMI_std", "BMI_n"]
 
-
 ```
+
+## 10. Hypothesis Testing -- Categorical Data: One Proportion
+
+A hypothesis test answers a question like: "could the value of the parameter be X?"
+And we use the data to help support that claim.
+
+Example: study of lack of sleep in teens. In previous years 52% of parents believed that electronics and social media caused that lack of sleep. Now, we have a new larger proportion. Has there been an increase of that believe?
+
+Population: parents with teens
+Parameter of interest: proportion, `p`
+New sample size: 1018
+New proportion: 56% of parents believe that electronics and social media produced lack of sleep in teens.
+
+We define the hypotheses:
+- The **null or not hypothesis** `H0` is the one that is contrary to our believe, i.e., there are not significant differences and the proportions/means belong to the same distribution
+- The **alternative hypothesis** `Ha` is our believe, and it can be accepted only if the null hypothesis is rejected.
+
+`H0: p0 = 0.52`: The `H0` hypothesis has always a `=` sign.
+
+`Ha: p_hat > p0`: bigger because our research question is posed like that. Depending on the research question, we can have `<`, `!=`. Note that `>` and `<` are directional, whereas `!=` is not.
+
+Significance level: `alpha`; typically `alpha = 0.05`. That is the threshold with which consider we have not enough evidence to support `H0`, so we reject it and accept `Ha`. The significance level must be set before collecting any of the data.
+
+Assumptions:
+- Random sample of parents.
+- Large enough sample size; at least 10 measurements of each class. That must be true for both propotions, so we check also: `n*p0, n*(1-p0) > 10`. Note that the sample size is of the new survey, while the proportion is from the old one.
+- If the assumptions are not met, we need to use another approach.
+
+Test Hypothesis:
+
+`Z = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
+
+`Z = (p_hat - p0) / SE(p_hat)`
+
+The `hypothesis estimate` is in the `H0`, after the `=` symbol: `p0`.
+
+`SE(p_hat) = sqrt(p0*(1-p0)/n)`: The standard error of the estimate is measured with the `p0` proportion! The reason is that we don't really know `p`, we have the best estimate of it. This is our **null standard error**.
+
+`Z = 2.555` -> we need to check the standard distribution `N(0,1)`; note that it is centered and scaled.
+
+Which is the p-value for it? `p-value = 0.0053` Since `p-value < alpha` (shaded are in figure), we reject `H0` and conclude that the new proportion is larger than the previous. The difference is significant, there is sufficient evidence. Note that since the `Ha` contains the directional operator `>`, we need to account for only one tail/side of the `Z` distribution.
+
+![One proportion hypothesis test: P-value Computation](./pics/hypothesis_test_one_proportion_p_value.png)
+
+## 11. Hypothesis Testing -- Categorical Data: Two Proportions
+
+Example: parents who report their children 6-18 years old have had swimming lessons; is there a significant difference between proportions of black and hispanic children?
+
+Population: parents, black & hispanic
+Parameter of interest: p1 - p2 (difference in population proportions; 1: black, 2 hispanic)
+Significance level: `alpha = 0.1`.
+
+`H0: p1 - p2 = 0`
+
+`Ha: p1 - p2 != 0` We choose `!=` because we don't care the direction; we could have chosen `>` or `<`, though. Note that `>` and `<` are directional, whereas `!=` is not.
+
+Data:
+- 247 black children, 91 had swimming lessons
+- 308 hispanic children, 120 has swimming lessons
+
+Assumptions:
+- Two i.i.d. samples
+- Large enough sample size; at least 10 for each of the 4 categories. We can check that also with the common proportion: `p_hat = all yes values / all measurements`; then, `n*p_hat, n*(1-p_hat) > 10` for all categories.
+- If the assumptions are not met, we need to use another approach.
+
+Proportions:
+
+`p1_hat = 91/247 = 0.37` (black)
+
+`p2_hat = 120/308 = 0.39` (hispanic)
+
+`p1_hat - p2_hat = -0.02`
+
+
+Hypothesis test:
+
+`Z = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
+
+The `hypothesis estimate` is in the `H0`, after the `=` symbol: `0`.
+
+`Z = (p1_hat - p2_hat - 0) / SE(p_hat)`
+
+`SE(p_hat) = sqrt(p_hat*(1-p_hat_) * (1/n1 + 1/n2))`: The standard error of the estimate is measured with the `p_hat` common proportion!
+
+`Z = -0.48` -> Our observed difference in sample proportions is 0.48 standard errors below our hypothesis mean of equal proportions. We look at the `Z = N(0,1)` which `p-value` that is; recall that since `!=` is non-directional, two sides need to be accounted for.
+
+`p-value = 0.65 > alpha = 0.1` -> We cannot reject `H0`: there is not enough evidence rejecting the equal proportions. Thus, there is not significant difference between proportions.
+
+![Two proportions hypothesis test: P-value Computation](./pics/hypothesis_test_two_proportions_p_value.png)
+
+There are two alternatives for dealing with two proportions:
+
+- Chi-Square test: for two-sided hypothesis
+- Fisher's exact test: for one-sided hypothesis, typically for small sample sizes
+
+![Two proportions hypothesis test: Alternative approaches](./pics/hypothesis_test_two_proportions_alternative_tests.png)
+
+## 12. P-Values, P-Hacking
+
+### 12.1 P-Values
+
+In the context of hypothesis testing, the `p-value` is:
+- If the `H0` is true, the `p-value` is the probability of getting the statistic we obtained from our data.
+- A `p-value` is a measure of surprise of `H0` being true, not a real measure of evidence. The higher the `p-value` the less surprise there should be that the `H0` is true, the lower the `p-value` the more surprise there should be that `H0` is true. Being surprised means the the data is not reflecting the `H0`.
+- So the `p-value` is a measure of the probability of the data supporting `H0`.
+
+The `p-value` is not the probability of `H0` being true! It is the probability of the data supporting `H0`. That is an important distinction.
+
+The `p-value` does not measure the effect. We can have a very low `p-value` but the difference is very small. In fact, you get smaller `p-values` when large samples are collected.
+
+The `p-value` is not small only when `H0` is false; it depends on other factors:
+- How much power do we have?
+- Which sampling?
+- Which test/analysis?
+
+To start doing serious claims, we need to repeat/replicate the study and come to similar conclusions that the `H0` is not a good predictor.
+
+### 12.2 P-Hacking
+
+P-Hacking can occur willingly or unknowingly, when the definition and the assumptions of the hypothesis test are not fulfilled. It creates misleading information: we don't know anymore how to interpret the data when p-hacking is present, although sometimes that is unknown. So it is really dangerous and a waste of energy and time.
+
+Some ways of producing p-hacking:
+
+- We perform several tests/analysis and select one
+- When we conduct a study with some research questions but analyze statistically some other later on, observing sub-groups, etc. So we deviate from the design.
+
+As long as we do not follow the assumptions and definitions, we can hack anything. For instance, when we take the outliers and analyze them: we are selecting them! When some assumptions / definitions are not met or we deviate from them, not only the p-values are wrong, also other metrics can be hacked: effect sizes, etc.
+
+In general, the more exploratory an experiment is, the higher is the probability of hacking. We should try to define precise protocols and follow them, to have more confirmatory studies.
+
+It has been argued that the p-values should not be used because there might be p-hacking behind. That seems to be similar to advocating for not using percentages, because people don't use them correctly. Instead, it is better to ask for precise protocols before (design), during (conduction logs) and after (analysis) the experiments.
