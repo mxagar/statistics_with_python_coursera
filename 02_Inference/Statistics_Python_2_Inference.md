@@ -889,7 +889,7 @@ We could plot boxplots.
 Assumptions:
 - Simple Random Samples.
 - Samples need to be independent from one another, not paired.
-- Population mean distributions should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It they don't not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach, such as the **Wilcoxon Signed Rank Test**.
+- Population mean distributions should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It they don't not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach.
 
 `T = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
 
@@ -910,4 +910,26 @@ The `hypothesis estimate` is in the `H0`, after the `=` symbol: `0`.
 `p-value = 0.19 < alpha = 0.05` -> We cannot reject `H0`: there is not enough evidence to support that the mean BMI of females is significantly different from the one of the males. 19% of the time we could see that the difference is not significant.
 
 As before, we can create Confidence Intervals. In this case the confidence interval for the difference contains the value 0; that is in line with the hypothesis test conclusion: since there is no significant difference, the difference 0 must be contained in the CI.
+
+## 16. Hypothesis Testing -- Other Considerations
+
+- Errors (recall we want to prove `Ha` by rejecting `H0`):
+  - Type I error: `H0` is true but incorrectly rejected. The significance level `alpha` operates here: `alpha` is the probability of the type I error.
+  - Type II error: `H0` is not rejected, but it is false. The power `beta` operates here: `beta` is the probability of the type II error.
+- Normality: the requirement is not very strict if the sample size is large enough; he reason is that we apply the Central Limit Theorem. Therefore, the normality assumption is really important only if the sample size is rather small.
+- Causality: beware of inferring causes! Confounding or hidden variables are common!
+- Multiplicity: the idea of performing multiple statistical tests on the same data is risky, since it can lead to wrong conclusions. That could happen if we keep performing tests between different identified groups in our data. A solution is to use the Bonferroni correction, which moves the threshold for significance to be more conservative. Basically, the p-value is multiplied by the number of tests, or the significance level divided by the number of tests.
+- Power: Probability of not making a Type II error: `1 - beta`; `beta` = probability of a Type II error. Usually we control the type I error with `alpha`; but `beta` can be anything!! A way of reducing `beta` is to perform less studies with larger sample sizes. It is possible to perform a **power analysis** to estimate the minimum required sample size for a minimum power or `1 - beta`.
+
+### Relationship between Confidence Intervals and Hypothesis Testing
+
+Hypothesis tests and confidence intervals are equivalents if only one parameters is analyzed; in fact, the process is called "inverting a hypothesis test to construct a confidence set".
+
+However, **hypothesis tests and confidence intervals are not equivalent if more than one parameter are analyzed**. It may happen that the confidence intervals overlap but the null hypothesis is rejected; in general, it is safer to use hypothesis testing. In doubt, do not infer hypotheses from confidence intervals.
+
+### Name That Scenario
+
+[Name That Scenario](https://nts.ai.umich.edu/Welcome/) is a nice testing website created by the University of Michigan. We select types of statistical tests and case studies or research studies are presented; we need to select the test (among the selected) which corresponds to each case.
+
+Try it!
 
