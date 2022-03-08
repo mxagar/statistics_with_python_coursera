@@ -853,7 +853,7 @@ Significance level: `alpha = 0.05`. Meaning: if we work on difference samples, 5
 We could plot a scatterplot.
 
 Assumptions:
-- Random sample of houses
+- Random sample of houses.
 - Population of differences should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It does not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach, such as the **Wilcoxon Signed Rank Test**.
 
 `T = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
@@ -864,7 +864,7 @@ The `hypothesis estimate` is in the `H0`, after the `=` symbol: `0`.
 
 `SE(mean(X)) = svd(X) / sqrt(n)`: The estimated standard error of the sample mean
 
-`T = 2.72` -> Our observed difference in sample proportions is 2.72 standard errors above our hypothesis mean of 80 in. We look at the Student's T distribution for the probability: `T(df = n - 1 = 19)`. Since we have the alternative to be `!=`, be need to shade/select both sides.
+`T = 2.72` -> Our observed difference in sample proportions is 2.72 standard errors above our hypothesis of difference mean 0. We look at the Student's T distribution for the probability: `T(df = n - 1 = 19)`. Since we have the alternative to be `!=`, be need to shade/select both sides.
 
 `p-value = 0.014 < alpha = 0.05` -> We can reject `H0`: there is enough evidence to support that the quotes from Supplier 1 are significantly different from the ones of Supplier 2. 1.4% of the time we could see that the difference is not significant.
 
@@ -874,36 +874,40 @@ As before, we can create Confidence Intervals.
 
 ## 15. Hypothesis Testing -- Quantitative Data: Two Means (Difference) of Independent Data
 
-Example: home renovations offers from Supplier 1 & 2; 20 examples of houses which requested the cost.
+Example: Mexican-American adults (ages 18-29) - do males have a significantly higher BMI than females?
 
-We compute the mean of the offer value difference and test wether there is a difference between both suppliers.
+`H0: mean(BMI_Male) - mean(BMI_Female) = 0 <-> mean(BMI_Male) = mean(BMI_Female)`
 
-`H0: mean(Supplier 1 - Supplier 2) = 0`
+`Ha: mean(BMI_Male) - mean(BMI_Female) != 0 <-> mean(BMI_Male) != mean(BMI_Female)`: note we have no direction!
 
-`Ha: mean(Supplier 1 - Supplier 2) != 0`: note we have no direction!
+Significance level: `alpha = 0.05`. Meaning: if we work on difference samples, 5% of the time are we going to get difference of means larger than 0.
 
-Significance level: `alpha = 0.05`. Meaning: if we work on difference samples, 5% of the time are we going to get difference means larger than 0.
+In contrast to the paired data, we don't work on the mean of the differences, but the differences of the means!
 
-We could plot a scatterplot.
+We could plot boxplots.
 
 Assumptions:
-- Random sample of houses
-- Population of differences should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It does not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach, such as the **Wilcoxon Signed Rank Test**.
+- Simple Random Samples.
+- Samples need to be independent from one another, not paired.
+- Population mean distributions should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It they don't not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach, such as the **Wilcoxon Signed Rank Test**.
 
 `T = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
 
 The `hypothesis estimate` is in the `H0`, after the `=` symbol: `0`.
 
-`T = (mean(X = Difference = Supplier 1 - Supplier 2) - 0) / SE(mean(X = Difference))`
+`T = (mean(BMI_Male) - mean(BMI_Female) - 0) / SE`
 
-`SE(mean(X)) = svd(X) / sqrt(n)`: The estimated standard error of the sample mean
+`SE`: The estimated standard error can be calculated with two approaches:
+  - Pooled approach: the variance of the two populations is assumed to be equal (see formula)
+    - `SE = ...` (actually, that's the chosen approach)
+  - Unpooled approach: variance is not assumed equal:
+    - `SE = sqrt(s1^2/n1 + s1^2/n1)`
 
-`T = 2.72` -> Our observed difference in sample proportions is 2.72 standard errors above our hypothesis mean of 80 in. We look at the Student's T distribution for the probability: `T(df = n - 1 = 19)`. Since we have the alternative to be `!=`, be need to shade/select both sides.
+![Hypothesis Testing: Pooled Standard Error](./pics/hypothesis_test_two_means_independent_pooled_standard_error.png)
 
-`p-value = 0.014 < alpha = 0.05` -> We can reject `H0`: there is enough evidence to support that the quotes from Supplier 1 are significantly different from the ones of Supplier 2. 1.4% of the time we could see that the difference is not significant.
+`T = 1.30` -> Our observed difference in sample proportions is 1.30 standard errors above our hypothesis of equal means. We look at the Student's T distribution for the probability: `T(df = n1 + n2 - 1 = 495)`. Since we have the alternative to be `!=`, be need to shade/select both sides.
 
-As before, we can create Confidence Intervals.
+`p-value = 0.19 < alpha = 0.05` -> We cannot reject `H0`: there is not enough evidence to support that the mean BMI of females is significantly different from the one of the males. 19% of the time we could see that the difference is not significant.
 
-![Hypothesis Test of Two Means, Paired: Confidence Intervals](./pics/hypothesis_test_two_means_paired_confidence_interval.png)
-
+As before, we can create Confidence Intervals. In this case the confidence interval for the difference contains the value 0; that is in line with the hypothesis test conclusion: since there is no significant difference, the difference 0 must be contained in the CI.
 
