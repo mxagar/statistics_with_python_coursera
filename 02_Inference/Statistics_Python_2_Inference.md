@@ -43,7 +43,13 @@ Overview of contents:
    - `./lab/02_ConfidenceIntervals_Examples.ipynb`
    - `./lab/03_ConfidenceIntervals_NHANES_Practice.ipynb`
    - `./lab/04_Assessment_ToddlersNap_ConfidenceIntervals.ipynb`
-10. Hypothesis Testing -- 
+10. Hypothesis Testing -- Categorical Data: One Proportion
+11. Hypothesis Testing -- Categorical Data: Two Proportions
+12. P-Values, P-Hacking
+   - 12.1 P-Values
+   - 12.2 P-Hacking
+   - 12.3 Good Practices
+13. Hypothesis Testing -- Quantitative Data: One Mean
 
 ## 1. Inference Procedures
 
@@ -791,3 +797,113 @@ It has been argued that the p-values should not be used because there might be p
 - Look for replications; don't focus on individual papers.
 
 Statistics is useless if the assumptions and definitions are not fulfilled.
+
+## 13. Hypothesis Testing -- Quantitative Data: One Mean
+
+Inference of a population mean, when we have quantitative data.
+
+Example: Cartwheel average distance in adults -- is it more than 80 in?
+Population: all adults
+Parameter of interest: population mean of cartwheel distance.
+
+`H0: mean(X = CartwheelDistance) = 80`
+
+`Ha: mean(X = CartwheelDistance) > 80`: note we have a direction: greater than.
+
+Significance level: `alpha = 0.05`. Meaning: if we work on difference samples, 5% of the time are we going to get means larger than 80 in.
+
+![Hypothesis Test of One Mean: Example Data](pics/hypothesis_test_one_mean_data.png)
+
+Assumptions for hypothesis testing with the T statistic:
+- Simple Random Sample
+- Normal or bell-shaped data: QQ-plot and histogram are not  that normal, but we accept them. We can do that because we have a large enough sample (`n = 25`). If the data is very skewed, we cannot use the approach below. Instead, we need to use a non-parametric test, such as the **Wilcoxon Signed Rank Test**.
+
+Hypothesis test:
+
+`T = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
+
+The `hypothesis estimate` is in the `H0`, after the `=` symbol: `80`.
+
+`T = (mean(X) - 80) / SE(mean(X))`
+
+`SE(mean(X)) = svd(X) / sqrt(n)`: The estimated standard error of the sample mean
+
+`T = 0.82` -> Our observed difference in sample proportions is 0.82 standard errors above our hypothesis mean of 80 in. We look at the Student's T distribution for the probability: `T(df = n - 1 = 24)`.
+
+`p-value = 0.21 > alpha = 0.05` -> We cannot reject `H0`: there is not enough evidence to supprt that the Cartwheel distance mean is greater than 80 in. 21% of the time we could see the result we got or a larger difference from 80 in.
+
+![Hypothesis Test of One Mean: p-value](pics/hypothesis_test_one_mean_p_value.png)
+
+Similarly, we can compute confidence interval estimates. Note that Confidence Interval estimation implied also hypothesis testing: if the CI contains a value, we know that that value is not significantly different to the center mean.
+
+![Hypothesis Test of One Mean: Confidence Interval](pics/hypothesis_test_one_mean_confidence_interval.png)
+
+## 14. Hypothesis Testing -- Quantitative Data: Two Means (Difference) of Paired Data
+
+Example: home renovations offers from Supplier 1 & 2; 20 examples of houses which requested the cost.
+
+We compute the mean of the offer value difference and test wether there is a difference between both suppliers.
+
+`H0: mean(Supplier 1 - Supplier 2) = 0`
+
+`Ha: mean(Supplier 1 - Supplier 2) != 0`: note we have no direction!
+
+Significance level: `alpha = 0.05`. Meaning: if we work on difference samples, 5% of the time are we going to get difference means larger than 0.
+
+We could plot a scatterplot.
+
+Assumptions:
+- Random sample of houses
+- Population of differences should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It does not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach, such as the **Wilcoxon Signed Rank Test**.
+
+`T = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
+
+The `hypothesis estimate` is in the `H0`, after the `=` symbol: `0`.
+
+`T = (mean(X = Difference = Supplier 1 - Supplier 2) - 0) / SE(mean(X = Difference))`
+
+`SE(mean(X)) = svd(X) / sqrt(n)`: The estimated standard error of the sample mean
+
+`T = 2.72` -> Our observed difference in sample proportions is 2.72 standard errors above our hypothesis mean of 80 in. We look at the Student's T distribution for the probability: `T(df = n - 1 = 19)`. Since we have the alternative to be `!=`, be need to shade/select both sides.
+
+`p-value = 0.014 < alpha = 0.05` -> We can reject `H0`: there is enough evidence to support that the quotes from Supplier 1 are significantly different from the ones of Supplier 2. 1.4% of the time we could see that the difference is not significant.
+
+As before, we can create Confidence Intervals.
+
+![Hypothesis Test of Two Means, Paired: Confidence Intervals](./pics/hypothesis_test_two_means_paired_confidence_interval.png)
+
+## 15. Hypothesis Testing -- Quantitative Data: Two Means (Difference) of Independent Data
+
+Example: home renovations offers from Supplier 1 & 2; 20 examples of houses which requested the cost.
+
+We compute the mean of the offer value difference and test wether there is a difference between both suppliers.
+
+`H0: mean(Supplier 1 - Supplier 2) = 0`
+
+`Ha: mean(Supplier 1 - Supplier 2) != 0`: note we have no direction!
+
+Significance level: `alpha = 0.05`. Meaning: if we work on difference samples, 5% of the time are we going to get difference means larger than 0.
+
+We could plot a scatterplot.
+
+Assumptions:
+- Random sample of houses
+- Population of differences should be bell-shaped, normally distributed. Plot histogram and QQ-plot. It does not need to be perfectly normal, if the sample size is large enough it is OK. However, if the data is very skewed, instead of using the T statistic below, we should use a non-parametric approach, such as the **Wilcoxon Signed Rank Test**.
+
+`T = (Best Estimate - Hypothesis Estimate) / Standard Error of Estimate`
+
+The `hypothesis estimate` is in the `H0`, after the `=` symbol: `0`.
+
+`T = (mean(X = Difference = Supplier 1 - Supplier 2) - 0) / SE(mean(X = Difference))`
+
+`SE(mean(X)) = svd(X) / sqrt(n)`: The estimated standard error of the sample mean
+
+`T = 2.72` -> Our observed difference in sample proportions is 2.72 standard errors above our hypothesis mean of 80 in. We look at the Student's T distribution for the probability: `T(df = n - 1 = 19)`. Since we have the alternative to be `!=`, be need to shade/select both sides.
+
+`p-value = 0.014 < alpha = 0.05` -> We can reject `H0`: there is enough evidence to support that the quotes from Supplier 1 are significantly different from the ones of Supplier 2. 1.4% of the time we could see that the difference is not significant.
+
+As before, we can create Confidence Intervals.
+
+![Hypothesis Test of Two Means, Paired: Confidence Intervals](./pics/hypothesis_test_two_means_paired_confidence_interval.png)
+
+
