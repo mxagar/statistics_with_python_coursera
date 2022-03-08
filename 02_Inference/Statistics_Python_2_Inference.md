@@ -781,4 +781,13 @@ As long as we do not follow the assumptions and definitions, we can hack anythin
 
 In general, the more exploratory an experiment is, the higher is the probability of hacking. We should try to define precise protocols and follow them, to have more confirmatory studies.
 
-It has been argued that the p-values should not be used because there might be p-hacking behind. That seems to be similar to advocating for not using percentages, because people don't use them correctly. Instead, it is better to ask for precise protocols before (design), during (conduction logs) and after (analysis) the experiments.
+It has been argued that the p-values should not be used because there might be p-hacking behind. That seems to be similar to advocating for not using percentages, because people don't use them correctly. Instead, it is better to ask for precise protocols before (design), during (conduction logs) and after (analysis) the experiments. Proper inference requires full reporting and transparency.
+
+### 12.3 Good Practices
+
+- If there are several methods/techniques/tests available, use several of them and see if the results differ; if they don't, we're on the good side
+- Publish the data and the used methods: data and code!
+- Peer-reviewers don't get access to the data; that should be changed, because verifying should be done!
+- Look for replications; don't focus on individual papers.
+
+Statistics is useless if the assumptions and definitions are not fulfilled.
