@@ -935,12 +935,12 @@ Try it!
 
 ## 17. Writing Assignment: Discussion of the Chocolate Study
 
-Repeated measures crossover study in which `n=9` male participants are measured for indicators related to cycling; in particular distance sprinted in 2 mins. 3 treatments:
-- Baseline measurement: before taking any chocolate
-- White cholocate (WC)
-- Dark cholocate (DC)
+Repeated measures crossover study in which `n=9` male participants are measured for indicators related to cycling; in particular distance sprinted in 2 mins. Three conditions, each for 2 weeks:
+- Baseline measurement: before taking any chocolate, prior measurement before starting the first treatment
+- Treatment 1: White cholocate (WC)
+- Treatment 2: Dark cholocate (DC)
 
-Crossover means a participant in one treatment (WC / DC) passes to the other treatment during the study. Treatment allocation was randomized.
+Crossover means a participant in one treatment (WC / DC) passes to the other treatment during the study. Treatment assignment was randomized.
 
 Baseline
   Mean (m): 1367
@@ -969,3 +969,38 @@ Write a [memorandum](https://owl.purdue.edu/owl/subject_specific_writing/profess
 
 ### Submitted Memo
 
+TO: US Bicycle Team Head Trainer
+FROM: Sports Health Analyst
+DATE: March 9, 2022
+SUBJECT: The Beneficial Effect of Dark Chocolate on Distance Covered in 2-Minute All-Out Sprints
+
+This document discusses the research paper by Patel et al. in which the effect of the ingestion of chocolate on the cycling performance was studied. The goals is to draw the most important insights that could be applied tp the US bicycle team to train more efficiently for the Tour de France.
+
+In the following, these aspects are covered:
+- Study design
+- Main Insights
+- Recommendations
+
+**Study Design**
+
+The research conducted by Patel et al. follows a repeated measures crossover study design. In such studies, we have a population from which a sample is randomly selected (in our case with n = 9 male participants) and different treatments are applied to them in different points in time, switching from one treatment to the other during the study (hence, crossover). Thus, the measurements are paired (because they belong to the same participants). That allows to understand the effects of each treatment on each subject and the overall population, performing inference on the sample.
+
+In Patel's work, the distance covered in all-out 2-minutes sprints by bicycle was measured in 9 males at the beginning of the study (Baseline). Then, these subjects were randomly assigned to the groups White Chocolate and Dark Chocolate for 2 weeks, during which they consumed 40g of the respective chocolate; after the period, their performance in the all-out sprint was measured, and they changed groups for another measurement 2 weeks later.
+
+**Main Insights**
+
+The study reports the mean (and the standard deviation) of the distances covered in 2-minutes sprints for Baseline, White Chocolate, and Dark Chocolate conditions: 1367 m (171 m), 1419 m (248 m), and 1606 m (158 m), respectively.
+
+Considering a significance level of alpha = 0.05, there was no statistically significant difference in the mean distances between Baseline and White Chocolate conditions (p = 0.319 > 0.05). However, there was a statistically significant difference between Baseline and Dark Chocolate (p = 0.001 < 0.05).
+
+Confidence intervals are reported, too. Typically, 95% Confidence Intervals are used, as in the study, which correspond to a level of significance of 0.05 (1 - 95%); these denote the parameter span (in our case, the mean distance) in which the real population parameter will be with a confidence of 95%. In other words, if the measurements are repeated with 100 random samples, their confidence intervals will contain the real mean 95% of the times.
+
+The 95% Confidence Interval for the population average change in total distance covered (dark chocolate over baseline) is 165 m to 314 m. The 95% Confidence Interval for the population average change in total distance covered (dark chocolate over white chocolate) is 82 m to 292 m.
+
+**Recommendation**
+
+The consumption of Dark Chocolate has a significant effect of the distance covered in All-Out 2-minute sprints, shifting the mean from 1367 m (Baseline) to 1606 m (Dark Chocolate), with a difference in means which spans from +165m to +314m (Confidence Interval of 95%).
+
+When the Dark and White Chocolate are compared, Dark Chocolate seems to be the better choice too, because its difference in means (Dark over White) spans from +82 m to +292 m.
+
+Therefore, the conclusion is clear: following the study, we should encourage our cyclists to consume dark chocolate, expecting to increase their performance at least in all-out sprints.
