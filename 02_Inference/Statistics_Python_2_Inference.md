@@ -933,3 +933,39 @@ However, **hypothesis tests and confidence intervals are not equivalent if more 
 
 Try it!
 
+## 17. Writing Assignment: Discussion of the Chocolate Study
+
+Repeated measures crossover study in which `n=9` male participants are measured for indicators related to cycling; in particular distance sprinted in 2 mins. 3 treatments:
+- Baseline measurement: before taking any chocolate
+- White cholocate (WC)
+- Dark cholocate (DC)
+
+Crossover means a participant in one treatment (WC / DC) passes to the other treatment during the study. Treatment allocation was randomized.
+
+Baseline
+  Mean (m): 1367
+  Std dev (m): 171
+White Chocolate (WC)
+  Mean (m): 1419
+  Std dev (m): 248
+  p-value (compared to baseline): 0.319
+Dark Chocolate (DC)
+  Mean (m): 1606
+  Std dev (m): 158
+  p-value (compared to baseline): 0.001
+
+Dark Chocolate: 95% Confidence Interval for the population average change in total distance covered (dark chocolate over baseline) is 165 m to 314 m; (p-value 0.001).
+
+Dark versus White Chocolate: 95% Confidence Interval for the population average change in total distance covered (dark chocolate over white chocolate) is 82 m to 292 m; (p-value = 0.003).
+
+Write a [memorandum](https://owl.purdue.edu/owl/subject_specific_writing/professional_technical_writing/memos/sample_memo.html) of 350-500 words.
+
+### Grading criteria
+
+1. Understandable for **basic statistic literacy**? Parts well written, parts difficult?
+2. Benefits of using a **crossover design**? What well, improvable?
+3. **Confidence intervals**, meaning, interpretation? WHat well, missing, improvable?
+4. Recommendation? Correct, improvable?
+
+### Submitted Memo
+
