@@ -50,6 +50,15 @@ Overview of contents:
    - 12.2 P-Hacking
    - 12.3 Good Practices
 13. Hypothesis Testing -- Quantitative Data: One Mean
+14. Hypothesis Testing -- Quantitative Data: Two Means (Difference) of Paired Data
+15. Hypothesis Testing -- Quantitative Data: Two Means (Difference) of Independent Data
+16. Hypothesis Testing -- Other Considerations
+    - Relationship between Confidence Intervals and Hypothesis Testing
+    - Name That Scenario
+17. Writing Assignment: Discussion of the Chocolate Study
+18. Hypothesis Testing -- Python Lab
+    - `./lab/05_Hypothesis_Testing_Examples.ipynb`
+    - `./lab/06_Hypothesis_Testing_NHANES_Practice.ipynb`
 
 ## 1. Inference Procedures
 
@@ -1004,3 +1013,263 @@ The consumption of Dark Chocolate has a significant effect of the distance cover
 When the Dark and White Chocolate are compared, Dark Chocolate seems to be the better choice too, because its difference in means (Dark over White) spans from +82 m to +292 m.
 
 Therefore, the conclusion is clear: following the study, we should encourage our cyclists to consume dark chocolate, expecting to increase their performance at least in all-out sprints.
+
+## 18. Hypothesis Testing -- Python Lab
+
+I completed three notebooks during the python lab sessions:
+
+- `./lab/05_Hypothesis_Testing_Examples.ipynb`: **most important notebook**. Examples of the theory are constructed.
+- `./lab/06_Hypothesis_Testing_NHANES_Practice.ipynb`: this notebook uses the methods from the previous one.
+
+In the following, the most important notebook is summarized.
+
+### `./lab/05_Hypothesis_Testing_Examples.ipynb`
+
+Very nice summary of hypothesis testing is provided. **Read it!**
+
+This notebook collects examples of the most important hypothesis tests. I have extended the course material, since **there are some errors or wrong practices in the course notebooks/videos**, as far as I understand; concretely, one should use:
+- the Z-Distribution (and Z-Tests) with proportions
+- the T-Distirbution (and T-Tests) with means
+
+Recall in a hypothesis test we have:
+- **Null Hypothesis**: `H0`, the parting hypothesis we want to reject (possible if `p-value < alpha`)
+- **Alternative Hypothesis:** `Ha`, the hypothesis that remains after `H0` is rejected
+- Significance level `alpha`: acceptance threshold of the `p-value`: p(Type I Error) = p(False Positive)
+- `p-value`: **assuming `H0` is true, which is the likelihood that the data we have occurs?**
+- Statistical power: `1 - beta`; `beta` = p(Type II Error) = p(False Negative)
+
+Hypothesis tests are computed why obtaining a `p-value` of a test statistic, which has always this form:
+
+`Statistic = (Best_Estimate - Hypothesized_Estimate(what comes after H0=)) / (Standard_Error)`
+
+The definition of the **standard error** is different for each case, but its general form is the square root of the sample variance divided by the sample size. Thus, the test statistic measures **how many standard errors away is the difference between the measurements and the null hypothesis**. If the statistic is large, we are far away in the tails, thus, the likelihood for the data appearing under `H0` is low.
+
+If `p-value < alpha`, the parameters are significantly different, i.e., we can reject the null hypothesis and accept the alternative. Otherwise (`p-value > alpha`), parameters are not significantly different, i.e., we cannot reject the null hypothesis.
+
+Overview of sections:
+
+1. One Population Proportion
+2. Difference in Population Proportions
+3. One Population Mean
+4. Difference in Population Means with Independent Data
+5. Difference in Population Means with Paired Data (Repeated Measured)
+6. Assumptions Checks: Normality with Histograms, Boxplots, and QQ-Plots
+7. Visualization of the critical T statistic
+8. Power and Sample Size Relationship
+
+In the following, only the key code snippets are posted, without case context. **Read the notebook for more info!**
+
+```python
+
+import statsmodels.api as sm
+import numpy as np
+import pandas as pd
+import scipy.stats.distributions as dist
+import matplotlib.pyplot as plt
+import seaborn as sns
+import scipy.stats as stats
+
+### 1. One Population Proportion
+
+n = 1018 # sample size
+pnull = 0.52 # H0
+phat = 0.56 # Ha
+# The Standard Error of the estimate is measured with the p0 proportion!
+# The reason is that we don't really know p, we have the best estimate of it
+se = np.sqrt(pnull*(1-pnull)/n)
+test_stat = (phat - pnull) / se
+print("Z-Statistic = ", test_stat)
+
+# One-sided: Ha >
+pvalue = dist.norm.cdf(-np.abs(test_stat))
+# Equivalent to
+# pvalue = 1-dist.norm.cdf(np.abs(test_stat))
+print("p-value = ", pvalue)
+
+
+n = 1018 # sample size
+pnull = 0.52 # H0
+phat = 0.56 # Ha
+# Proportion hypotheses are tested with the Z=N(0,1) distribution
+# The parameters for the Z-Test are self-explanatory
+# The Z value and its p-value are returned
+# Note that depending on the alternative >, <, !=
+# a different token is used
+# hence, the p-vale is computed as one- or two-sided!
+sm.stats.proportions_ztest(phat * n,
+                           n,
+                           pnull,
+                           alternative='larger',
+                           prop_var=pnull)
+
+
+### 2. Difference in Population Proportions
+
+# Sample sizes
+n1 = 247
+n2 = 308
+
+# Number of parents reporting that their child had some swimming lessons
+y1 = 91
+y2 = 120
+
+# Estimates of the population proportions
+p1 = round(y1 / n1, 2)
+p2 = round(y2 / n2, 2)
+
+# Estimate of the combined population proportion
+phat = (y1 + y2) / (n1 + n2)
+
+# Estimate of the variance of the combined population proportion
+va = phat * (1 - phat)
+
+# Estimate of the standard error of the combined population proportion
+se = np.sqrt(va * (1 / n1 + 1 / n2))
+
+# Test statistic and its p-value: 2-sided, because the Ha is !=
+test_stat = (p1 - p2) / se
+pvalue = 2*dist.norm.cdf(-np.abs(test_stat))
+# Equivalent to
+# pvalue = 2*(1-dist.norm.cdf(np.abs(test_stat)))
+
+# Print the test statistic its p-value
+print("Test Statistic")
+print(round(test_stat, 2))
+
+print("\nP-Value")
+print(round(pvalue, 2))
+
+### 3. One Population Mean
+
+df = pd.read_csv("Cartwheeldata.csv")
+n = len(df)
+mean = df["CWDistance"].mean()
+sd = df["CWDistance"].std()
+
+# T statistic
+se = sd/np.sqrt(n)
+t = (mean - 80)/se
+# With T and df, we can get the p-value from the T distribution
+df = n - 1
+# p-value is obtained form the cummulative density function (CDF) with the given df
+# since we want the remaining are under the PDF, we need to compute 1-CDF(t)
+p = 1 - dist.t.cdf(np.abs(t),df=df)
+# If that were a 2-sided test (Ha !=), we would have to x2 the p-value
+# Display
+print("t = " + str(t))
+print("p-value = " + str(p))
+
+### 4. Difference in Population Means with Independent Data
+
+females = da[da["RIAGENDR"] == 2]
+male = da[da["RIAGENDR"] == 1]
+n1 = len(females)
+mu1 = females["BMXBMI"].mean()
+sd1 = females["BMXBMI"].std()
+n2 = len(male)
+mu2 = male["BMXBMI"].mean()
+sd2 = male["BMXBMI"].std()
+
+se_pooled = np.sqrt(((sd1**2)/n1) + ((sd2**2)/n2))
+se_unpooled = np.sqrt(((n1-1)*sd1**2 + (n2-1)*sd2**2)/(n1+n2-2)) * np.sqrt((1/n1) + (1/n2))
+
+#t = (mu1 - mu2)/se_pooled
+t = (mu1 - mu2)/se_unpooled
+
+# With T and df, we can get the p-value from the T distribution
+df = n1 + n2 - 2
+# p-value is obtained form the cummulative density function (CDF) with the given df
+# since we want the remaining are under the PDF, we need to compute 1-CDF(t)
+# Since it is a 2-sided test (Ha !=), we need to x2 the p-value
+p = 2*(1 - dist.t.cdf(np.abs(t),df=df))
+# Display
+print("t = " + str(t))
+print("p-value = " + str(p))
+
+### 5. Difference in Population Means with Paired Data (Repeated Measured)
+
+mu = 17.30
+sd = 28.49
+n = 20
+se = sd / np.sqrt(n)
+t = (mu - 0) / se
+
+# With T and df, we can get the p-value from the T distribution
+df = n - 1
+# p-value is obtained form the cummulative density function (CDF) with the given df
+# since we want the remaining are under the PDF, we need to compute 1-CDF(t)
+# Since it is a 2-sided test (Ha !=), we need to x2 the p-value
+p = 2*(1 - dist.t.cdf(np.abs(t),df=df))
+# Display
+print("t = " + str(t))
+print("p-value = " + str(p))
+
+### 6. Assumptions Checks: Normality with Histograms, Boxplots, and QQ-Plots
+
+# - Random
+# - Independent / Paired
+# - Bell-shaped: normal, or large enough sample size
+
+da = pd.read_csv("nhanes_2015_2016.csv")
+females = da[da["RIAGENDR"] == 2]
+males = da[da["RIAGENDR"] == 1]
+
+# Histograms
+plt.figure(figsize=(10,6))
+sns.histplot(data=females["BMXBMI"],color='red',kde=True,bins=20)
+sns.histplot(data=males["BMXBMI"],color='green',kde=True,bins=20)
+
+# Boxplots
+plt.figure(figsize=(7,5))
+plt.boxplot((females["BMXBMI"].dropna(),males["BMXBMI"].dropna()),labels=['Females','Males'])
+
+# QQ-Plots
+stats.probplot(females["BMXBMI"].dropna(), dist="norm", fit= True, plot=plt, rvalue=True)
+stats.probplot(males["BMXBMI"].dropna(), dist="norm", fit= True, plot=plt, rvalue=True)
+
+### 7. Visualization of the critical T statistic
+
+from scipy.stats import t, norm
+import matplotlib.pyplot as plt
+%matplotlib inline
+
+def plot_t_critical(df,alpha=0.05):
+    # Set figure 
+    plt.figure(figsize=(8, 4))
+    # T distribution with df
+    dist = t(df)
+    # t range (x)
+    x = np.linspace(dist.ppf(0.0001), dist.ppf(0.9999), 100)
+    # Critical value; PPF is the inverse of CDF
+    t_crit = dist.ppf(1-alpha)
+    # Plot values
+    plt.plot(x, dist.pdf(x), alpha=0.6, label=' X ~ T({})'.format(df))
+    plt.vlines(t_crit, 0.0, 1.0, color='red', linestyles="dashdot", label="Crit. Value: {:.2f}\nalpha: {:.2f}".format(t_crit,alpha))
+    plt.legend()
+    plt.title('T-Distribution df:{}'.format(df))
+    plt.xlabel('X=t')
+
+# We select the df of the T distribution, as well as our alpha
+# If we have a 2-sided test (Ha !=), we need to divide alpha by 2
+plot_t_critical(df=20,alpha=0.05/2)
+
+### 8. Power and Sample Size Relationship
+
+# The following four variables are related (i.e., fixing 3, we predict the 4th):
+# - Effect size: Cohen's d between groups : d = (mean_1 - mean_2) / unpooled_std
+# - Sample size (n)
+# - Significance level (alpha)
+# - Statistical power (1-beta)
+
+# Estimate sample size via power analysis
+from statsmodels.stats.power import TTestIndPower
+# parameters for power analysis
+effect = 0.8 # Cohen's d
+alpha = 0.05
+power = 0.8 # 1 - beta
+# perform power analysis
+analysis = TTestIndPower()
+result = analysis.solve_power(effect, power=power, nobs1=None, ratio=1.0, alpha=alpha)
+print('Sample Size: %.3f' % result)
+
+```
