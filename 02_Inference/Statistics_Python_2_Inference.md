@@ -59,6 +59,8 @@ Overview of contents:
 18. Hypothesis Testing -- Python Lab
     - `./lab/05_Hypothesis_Testing_Examples.ipynb`
     - `./lab/06_Hypothesis_Testing_NHANES_Practice.ipynb`
+19. Good Research Questions
+20. Accounting for Complex Samples
 
 ## 1. Inference Procedures
 
