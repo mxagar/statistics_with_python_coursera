@@ -117,7 +117,7 @@ These two different reasoning might lead to different probabilities. We need to 
 - Standard deviation: $\sigma$ vs. $s$ or $\hat{\sigma}$
 - Proportions: $\pi$ or $p$ vs $\hat{\pi}$ or $\hat{p}$
 - Confidence interval: the empirical rule states tha roughly the `2x sigma` spread covers the 95% of the total distribution; however, the exact multiplier is `1.96`.
-- Prefer to use the term **standard error** to denote the true variability of a statistic, computed as its standard deviation.
+- Prefer to use the term **standard error** to denote the true variability of a statistic, computed as its standard deviation; in other words: **the standard error is the standard deviation of the sampling distribution of a parameter**.
 
 See the colocated file `./Notation_Definitions.pdf`.
 
@@ -137,6 +137,8 @@ Overview:
 6. Assessment Code
 
 ## 3. Confidence Intervals -- Categorical Data: One Proportion
+
+Note that confidence intervals are computed with our sample, but they refer to the population!
 
 ### 3.1 Estimating a Population Proportion with Confidence
 
@@ -1273,3 +1275,29 @@ result = analysis.solve_power(effect, power=power, nobs1=None, ratio=1.0, alpha=
 print('Sample Size: %.3f' % result)
 
 ```
+
+## 19. Good Research Questions
+
+What defines a good research question? We need to account for these key aspects:
+
+- Target population of interest is very clear: we know excactly where to randomly choose.
+- Is a descriptive or analytic question?
+  - Descriptive: means; e.g., mean income
+  - Analytic: relationships between variales; e.g., relationship between income and education level
+- Has it been asked before? Will it provide new knowledge?
+- Are variables available, can they be measured? E.g., academic success or happiness might be difficult to measure, unless we use concrete definitions.
+
+If the key aspects are fulfilled and follow the statistical methods presented so far, we are going to have good inferences.
+
+## 20. Accounting for Complex Samples
+
+Complex samples like NHANES are not Simple Random Samples (SRS); thus, we need to account for the weights computed when choosing the measured subjects. Recall that these weights increase the standard error: the more variable the weights, the higher the standard error.
+
+Accounting for these weights leads to different confidence intervals and statistics used in hypothesis tests. Our general interpretation might change or we might over/understate some facts.
+
+Some weights from the NHANES dataset:
+
+- `WTINT2YR`: survey weights for all sampled individuals given the medical history interview; the weight indicates how many other people they represent. If the measures of interest are related, we need to incorporate the weight.
+- `SDMVSTRA`: codes of the sampling strata; a stratified sampling is expected to decrease the standard errors.
+- `SDMVPSU`: code for the rimary sampling units (i.e., clusters) that were randomly selecte within each strata; they usually refer to geographic areas, such as counties. Recall that cluster sampling increases the standard errors.
+
