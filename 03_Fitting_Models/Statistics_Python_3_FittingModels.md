@@ -14,7 +14,96 @@ Mikel Sagardia, 2022.
 No warranties.
 
 Overview of contents:
-1. A
+1. Considerations for Statistical Modeling
 
-## 1. A
+## 1. Considerations for Statistical Modeling
+
+### 1.1 Fitting Models to Data
+
+We fit models to data, not the other way around!
+
+We want to fit models to the data to
+
+- estimate distribution properties of variables
+- summarize relationships between variables
+- predict values of variables.
+
+We are going to use parametric models: the model is expressed in parameters; we find the parameter values that best fit the data. We are basically making inferences of parameters; thus, we can also compute their confidence intervals or we can perform hypothesis tests on them.
+
+It is fundamental to assess how well the model fits the data; we're going to see techniques for that.
+
+Example: test performance of students vs. student age; can age predict the test performance? Two major hypothesis are analyzed, which are subclasses of polynomial regression:
+
+1. Mean-only model: `performance = mean + error`
+2. Curvi-linear model: `performance = a + b*age + c*age^2 + error`
+
+In both cases, `error = N(0, sigma^2)`. Thus, we estimate
+
+1. 2 parameters for the first model: `mean`, `sigma^2`,
+2. 4 parameters for the second model: `a`, `b`, `c`, `sigma^2`.
+
+Note that:
+- We can compute the standard error of the parameters (except `sigma`)
+- We need to check the assumption `error = N(0, sigma^2)`; for that: we plot for the residuals
+  - scatterplot
+  - histogram
+  - QQ-plot
+
+If the errors are clearly not normally distributed, the model does not represent the data.
+
+![Fitting Model: Performance vs. Age - Mean](./pics/fitting_models_example_mean.png)
+
+![Fitting Model: Performance vs. Age - Curvilinear](./pics/fitting_models_example_curvilinear.png)
+
+Personal notes:
+
+- In both models, we are predicting the mean performance; however, the second model has polynomial terms of the variable age of higher order, whereas the first model does not have a variable of dependence: simply a mean is computed.
+- The `error` term is `error = real performance - prediction`.
+
+
+### 1.2 Types of Variables in Statistical Modeling
+
+Roughly, we have these types of variables
+
+- Categorical vs. Continuous: that relates to the type.
+- Dependent Variables and Independent Variables: we want to find their relationship.
+
+**Independent Variables** (IV; aka. predictors, regressors): these are the variables we want to predict.
+
+- They can be manipulated, i.e., groups randomly assigned in the study, or observed.
+- If observed, we can find relationships
+- If manipulated/controlled, we can predict and in some situations make causal inferences.
+- Can be categorical, continuos; if categorical (e.g., ethnicity), we cannot make functional relationships, instead we compare groups.
+
+**Dependent Variables** (DV; aka. outcome, response, variables of interest):
+
+- We select a reasonable distribution (e.g., normal) or the predicting variables and define its parameters (e.g., mean) as a function of the IVs (independent variables)
+- Can be continuous, categorical
+
+**Control variables**: control variables are independent variables added to the model in cases where we know they have a relationship with another independent variable used as a predictor. For instance: predict blood pressure as a a function of gender; since weight means are expected to be different for both genders and weight might be related to blood pressure, we add it to the model. That way, we can adjust for confounding.
+
+**Missing data**: before any model fitting, we need to check for missing data:
+
+- Perform bi-variate analyses on IVs and DVs
+- We say a unit is a data-point with all independent variables or measurements and its associated dependent variable(s).
+- By default, if a unit of analysis has a missing dependent variable, the entire unit is dropped; thus, we introduce bias, which will be larger the more different the dropped unit is
+- Therefore, we should analyze how different the dropped units are.
+- If there are differences, a possible approach is to predict the missing data with **imputation**.
+
+### 1.3 Different Study Design Generate Different Data
+
+We need to be well informed before staring to fit models.
+
+Simple Random Samples (SRS) typically produce independent and identically distributed data (i.i.d.); thus, we can use the assumption that the observations are independent from each other. Thus, the standard error is going to be smaller, i.e., we're going to have more precise estimates.
+
+Clustered Samples are related to measurements in randomly selected groups; it is to be expected that each group will have more similar data. Thus, there is going to be a correlation, i.e., they are not independent from each other, and we need to take that into account! In fact, we're going to have larger standard errors, i.e., the estimates are going to be less accurate.
+
+In longitudinal studies, repeated measures of the same variable collected from the same unit (e.g., subject) are done over time; thus, they are expected to be correlated. The recorded variables are not independent from each other!
+
+### 1.4 Objectives of Model Fitting: Inference vs. Prediction
+
+When fitting a model, we have two major objectives:
+
+1. We want to make and inference about relationships: which is the relationship?
+2. We want to predict/forecast future outcomes using historical data.
 
