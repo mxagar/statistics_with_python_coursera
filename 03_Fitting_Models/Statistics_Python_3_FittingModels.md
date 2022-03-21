@@ -107,3 +107,29 @@ When fitting a model, we have two major objectives:
 1. We want to make and inference about relationships: which is the relationship?
 2. We want to predict/forecast future outcomes using historical data.
 
+Let's analyze each objective in the model:
+
+`performance = a + b*age + c*age^2 + error`
+
+**Objective 1**: Making Inferences
+
+We compute the standard error of each and the `T-Statistic` using the `H0` that `a = b = c = 0`, i.e., there is no model. For instance, for the parameter `a`:
+
+`Ta = (a - 0) / SE(a) = (5.11 - 0) / 0.10 = 51.1` -> `p-value = 0` -> `H0` is rejected, `a` is significant!
+
+![Inferences with a Fitted Model](./pics/fitting_models_example_inference_parameters.png)
+
+Now, each coefficient has a meaning:
+
+- `a` represents the mean test performance when the age is equal to the mean of the dataset.
+- `b` represents the rate of increase in performance with age.
+- `c` represents the acceleration of increase with age.
+
+If any of the parameters is non-significant, it drops from the model; and I understand we need to re-compute/fit it?
+
+**Objective 2**: Making Predictions
+
+To predict, we apply the model formula to an independent set of variables (in this case, `age`) and we get the estimate mean of the dependent variable (`performance`). We can also predict something different to a mean, such as a percentile.
+
+However, we need to account for the `error`, or the uncertainty associated to the prediction: we need to report it, too, since it's part of the prediction model! I understand that we would report something similar to a confidence interval?
+
