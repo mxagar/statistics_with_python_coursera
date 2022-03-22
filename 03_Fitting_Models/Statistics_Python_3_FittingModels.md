@@ -14,7 +14,16 @@ Mikel Sagardia, 2022.
 No warranties.
 
 Overview of contents:
+
 1. Considerations for Statistical Modeling
+   - 1.1 Fitting Models to Data
+   - 1.2 Types of Variables in Statistical Modeling
+   - 1.3 Different Study Design Generate Different Data
+   - 1.4 Objectives of Model Fitting: Inference vs. Prediction
+   - 1.5 Plotting Predictions and Prediction Uncertainty
+   - 1.6 Links & Readings
+   - 1.7 Python Lab - `01_ModelFitting_Introduction.ipynb`
+2. Fitting Models to Independent Data: Linear & Logistic Regression
 
 ## 1. Considerations for Statistical Modeling
 
@@ -383,3 +392,5 @@ for i, col in enumerate(features):
     plt.ylabel('MEDV')
 
 ```
+
+## 2. Fitting Models to Independent Data: Linear & Logistic Regression
