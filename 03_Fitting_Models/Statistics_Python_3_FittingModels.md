@@ -153,3 +153,233 @@ Lessons:
 - We need to compute the standard error of each parameter, as well as its `p-value`.
 - The standard error needs to be plotted too: that's the gray area around the model.
 - Large standard errors denote cases in which our estimates deviate too much from the data points.
+
+### 1.6 Links & Readings
+
+[Mixed effects models: Is it time to go Bayesian by default?](http://babieslearninglanguage.blogspot.com/2018/02/mixed-effects-models-is-it-time-to-go.html)
+
+Blog post by Michael Frank in which the alternative to linear mixed effects modelling (frequentist approach) is contrasted against Bayesian modelling. Frank argues that R packages have appeared recently that make the work much easier. Additionally, these are more robust (converge easier) and provide the interpretation which is usually sought: we want the probability of the hypothesis given the data. In contrast, frequentist approaches provide `p-values`, which are the probability of the data under the null hypothesis.
+
+### 1.7 Python Lab - `01_ModelFitting_Introduction.ipynb`
+
+The notebook `./lab/01_ModelFitting_Introduction.ipynb` provides a short introduction of the topics learned in the sections below.
+
+This notebook has two parts:
+
+1. Basic Statsmodels Functionalities for Fitting Models. Functions for hypothesis testing as well as for linear and logistic regression modelling are introduced.
+2. Exploratory Data Analysis before Modelling: Boston Housing Dataset. After loading the standard Boston Housing dataset, its variables are plotted, correlations computed and transformations applied.
+
+Overview of sections:
+
+1. Basic Statsmodels Functionalities for Fitting Models
+    - 1.1 Descriptive Statistics
+    - 1.2 Confidence Intervals: Proportions & Means
+    - 1.3 Hypothesis Testing: Proportions & Means
+    - 1.4 Fitting Models: OLS, GLM, GEE, MIXEDLM
+        - 1.4.1 OLS: Ordinary Least Squares - Linear Regression
+        - 1.4.2 GLM: Generalized Linear Model - Logistic Regression
+        - 1.4.3 GEE: Generalized Estimated Equations
+        - 1.4.4 MIXEDLM: Multilevel Models
+2. Exploratory Data Analysis before Modelling: Boston Housing Dataset
+    - 2.1 Load and Understand Dataset
+    - 2.2 Exploratory Data Analysis (EDA)
+
+In the following, the most relevant python snippets from the notebook are presented:
+
+```python
+
+### --- 1. Basic Statsmodels Functionalities for Fitting Models
+
+import statsmodels.api as sm
+import numpy as np
+import pandas as pd
+
+## 1.1 Descriptive Statistics
+
+# Draw random variables from a normal distribution with numpy
+normalRandomVariables = np.random.normal(0, 1, 1000)
+
+# Create object that has descriptive statistics as variables
+x = sm.stats.DescrStatsW(normalRandomVariables)
+
+# Mean
+print(x.mean)
+
+# Standard deviation
+print(x.std)
+
+# Variance
+print(x.var)
+
+## 1.2 Confidence Intervals: Proportions & Means
+
+# Observer population proportion
+p = 0.85
+
+# Size of population
+n = 659
+
+# Construct confidence interval: 95% by default
+sm.stats.proportion_confint(n * p, n)
+
+# Import data that will be used to construct confidence interval of population mean
+df = pd.read_csv('Cartwheeldata.csv')
+
+# Generate confidence interval for a population mean
+sm.stats.DescrStatsW(df["CWDistance"]).zconfint_mean()
+
+## 1.3 Hypothesis Testing: Proportions & Means
+
+# Population size
+n = 1018
+
+# Null hypothesis for one population proportion
+pnull = 0.52
+
+# Observed population proportion
+phat = 0.56
+
+# Calculate test statistic and p-value;
+# output: statistic, p-value
+sm.stats.proportions_ztest(phat * n, n, pnull)
+
+# Using the dataframe imported above,
+# perform a hypothesis test for one population mean;
+# output: statistc, p-value
+sm.stats.ztest(df["CWDistance"], value = 80, alternative = "larger")
+
+## 1.4 Fitting Models: OLS, GLM, GEE, MIXEDLM
+
+# Load NHANES dataset
+da = pd.read_csv("nhanes_2015_2016.csv")
+
+# Drop unused columns, drop rows with any missing values.
+vars = ["BPXSY1", "RIDAGEYR", "RIAGENDR", "RIDRETH1", "DMDEDUC2", "BMXBMI",
+        "SMQ020", "SDMVSTRA", "SDMVPSU"]
+da = da[vars].dropna()
+# Rename/replace gender
+da["RIAGENDRx"] = da.RIAGENDR.replace({1: "Male", 2: "Female"})
+
+# OLS: Ordinary Least Squares - Linear Regression
+# Linear Regression: continuous outcome
+# Note how that the model is described as in R
+model = sm.OLS.from_formula("BPXSY1 ~ RIDAGEYR + RIAGENDRx", data=da)
+res = model.fit()
+print(res.summary())
+
+# GLM: Generalized Linear Model - Logistic Regression
+# Logistic regression: binary outcome (0, 1)
+# Rename/replace smoking: this will be our outcome or dependent variable
+da["smq"] = da.SMQ020.replace({2: 0, 7: np.nan, 9: np.nan})
+# Smoking yes/no predicted with gender
+model = sm.GLM.from_formula("smq ~ RIAGENDRx", family=sm.families.Binomial(), data=da)
+res = model.fit()
+print(res.summary())
+
+# GEE: Generalized Estimated Equations
+# Linear models for cluster samples or repeated measures,
+# i.e., observations that might be correlated within a cluster,
+# but uncorrelated across clusters
+da["group"] = 10*da.SDMVSTRA + da.SDMVPSU
+model = sm.GEE.from_formula("BPXSY1 ~ 1", groups="group", cov_struct=sm.cov_struct.Exchangeable(), data=da)
+res = model.fit()
+print(res.cov_struct.summary())
+
+# MIXEDLM: Multilevel Models
+# Similar to GEE: used when there is potential of outcomes to be grouped together
+for v in ["BPXSY1", "RIDAGEYR", "BMXBMI", "smq", "SDMVSTRA"]:
+    model = sm.GEE.from_formula(v + " ~ 1", groups="group",
+           cov_struct=sm.cov_struct.Exchangeable(), data=da)
+    result = model.fit()
+    print(v, result.cov_struct.summary())
+
+### --- 2. Exploratory Data Analysis before Modelling: Boston Housing Dataset
+
+import warnings
+warnings.filterwarnings('ignore')
+import numpy as np
+import matplotlib.pyplot as plt 
+import pandas as pd  
+import seaborn as sns 
+%matplotlib inline
+
+## 2.1 Load and Understand Dataset
+
+from sklearn.datasets import load_boston
+# Boston Housing Dataset: provided by Scikit Learn
+boston_dataset = load_boston() 
+boston = pd.DataFrame(data=boston_dataset.data, columns=boston_dataset.feature_names)
+boston["MEDV"] = boston_dataset.target
+
+boston.shape
+
+boston.columns
+
+# Read always the description and backgroud
+# In this case:
+# - 506 data points
+# - 13 independent variables
+# - 1 dependent variable / target: MEDV = Median value of owner-occupied homes in $1000's
+print(boston_dataset.DESCR)
+
+## 2.2 Exploratory Data Analysis (EDA)
+
+boston.head()
+
+# Check missing data: we are lucky this time, since there are no missing values
+boston.isnull().sum()
+boston.isna().sum()
+
+# Always plot the target / outcome
+# In our case, we that MEDV is quite normally distributed,
+# except the outliers in the upper quartile
+sns.set(rc={'figure.figsize':(11.7,8.27)})
+sns.distplot(boston["MEDV"], bins = 25)
+plt.show()
+
+# If we have many independent variables, we should:
+# - check their correlations to choose the ones for our model
+# - check the scatterplots of the selected ones
+# In this example, the variables that are most correlated with MEDV (dependent) are:
+# CRIM, INDUS, NOX, RM, AGE, RAD, TAX, PTRATIO, LSTAT
+correlation_matrix = boston.corr().round(2)
+sns.set(rc={'figure.figsize':(11.7,8.27)})
+sns.heatmap(data=correlation_matrix, annot=True)
+plt.show()
+
+# We should plot pairwise scatterplots of the selected variables:
+# independent vs dependent
+# We exemplary select: RM, CRIM
+# RM: it seems that a linear model could fit the point cloud
+# CRIM: there is no clear linear relationship, most values are grouped in the begining
+plt.figure(figsize=(20, 5))
+features = ['RM', 'CRIM']
+target = boston['MEDV']
+for i, col in enumerate(features):
+    plt.subplot(1, len(features) , i+1)
+    x = boston[col]
+    y = target
+    plt.scatter(x, y, marker='o')
+    plt.title(col)
+    plt.xlabel(col)
+    plt.ylabel('MEDV')
+
+# In cases which the scatterplot reveals non-linear agglutinations
+# we can try applying transformations.
+# In this case: log(CRIM)
+# The transformed data reveals a better linear relationship to MEDV (DV)
+# We should use log(CRIM) instead of CRIM
+plt.figure(figsize=(20, 5))
+boston["logCRIM"] = np.log(boston["CRIM"])
+features = ['CRIM', 'logCRIM']
+target = boston['MEDV']
+for i, col in enumerate(features):
+    plt.subplot(1, len(features) , i+1)
+    x = boston[col]
+    y = target
+    plt.scatter(x, y, marker='o')
+    plt.title(col)
+    plt.xlabel(col)
+    plt.ylabel('MEDV')
+
+```
