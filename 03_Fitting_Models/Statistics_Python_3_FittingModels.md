@@ -133,3 +133,23 @@ To predict, we apply the model formula to an independent set of variables (in th
 
 However, we need to account for the `error`, or the uncertainty associated to the prediction: we need to report it, too, since it's part of the prediction model! I understand that we would report something similar to a confidence interval?
 
+### 1.5 Plotting Predictions and Prediction Uncertainty
+
+When we fit a model we get its parameter values; as important as the parameter values is their uncertainty, which is given by the **standard error** of the computed parameters. With that standard error, we can test any `H0` hypothesis with a `T-Test`:
+
+`T = (Parameter Value - H0) / SE(Parameter Value)`
+
+`H0` is selected usually to be `0`, but we can take any value! Then we would reject or not that value.
+
+Note that the same model with the same parameter values can have a very different underlying dataset. An example is given for two datasets in which the same model is fit `Y = a + b*X`. Additionally, the parameters `a, b` have the same values:
+
+![Model Uncertainty: Standard Error of Parameters](./pics/uncertainty_standard_error.png)
+
+However, the points of the second dataset are much more spread away from the model!
+
+Lessons:
+
+- We need to always plot the dataset and the model.
+- We need to compute the standard error of each parameter, as well as its `p-value`.
+- The standard error needs to be plotted too: that's the gray area around the model.
+- Large standard errors denote cases in which our estimates deviate too much from the data points.
