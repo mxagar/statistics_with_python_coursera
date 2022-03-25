@@ -394,3 +394,44 @@ for i, col in enumerate(features):
 ```
 
 ## 2. Fitting Models to Independent Data: Linear & Logistic Regression
+
+### 2.1 Linear Regression: Continuous Dependent Variables
+
+Example used from the Cartwheel dataset: predict cartwheel distance (`CWDistance`) based on:
+
+- Height of the person (`Height`)
+- Whether they fully completed the cartwheel (`CompleteGroup = 0,1`)
+
+First, the `CWDistance ~ Height` relationship is analyzed. Steps:
+
+- Check distribution of `CWDistance`: histogram, QQ-plot, range, mean, std, etc.
+- Visualize the scatter-plot.
+- Compute correlation, R2: `CWDistance` vs `Height`
+  - `corr = 0.33`
+  - `R2 = 0.107`: only 11% of the variation in `CWDistance` can be explained by the linear relationship with height.
+- Obtain the parameters of the best fitting line: linear regression: `y_hat = b_0 + b_1 * x`
+  - `b_0 = 7.55`: intercept: offset when the dependent variable is 0.
+  - `b_1 = 1.11`: slope: increase in response when the independent variable increases one unit.
+
+The regression line is found by minimizing the squared error from the data points to the model or parametrized line; that is called the **least squares** technique, or regression.
+
+Note that when the parameters of the model are solved:
+
+- The line predicts the estimation of the mean for a given independent variable value
+- If we go out of the range of our dataset, we are extrapolating, which is dangerous; the model fits the current data, nothing else!
+
+![Linear Regression: Cartwheel example](./pics/linear_regression_example.png)
+
+As important as the values of the parameters is the **inference of the linear regression**. With the inference, we conclude if the result can be transferred from our sample to the population; in other words, the significance of the parameters and their confidence intervals are obtained. In a linear regression, the most important parameter is `b_1`, since it's the one that measures the relationship between the dependent and the independent parameter. For that, we follow the usual methods:
+
+- Obtain standard error: `SE`
+- Obtain the `T` statistic for the parameter(s): `T = (Parameter Value - H0) / SE`.
+- Get the `p-value` of the `T` statistic (1- or 2-sided, depending on the `H0` definition).
+
+![Linear Regression Inference: Cartwheel example](./pics/linear_regression_example_inference.png)
+
+The confidence interval of `95%` is equivalently computed and can be seen next to the `p-value` in the results table. Although in the video and in the slide the slope is considered marginally significant, I think it should not be considered significant - in fact, the confidence interval contains the value 0, i.e., with 95% confidence, the mean slope can be indeed 0!
+
+Finally, the main assumption must be checked: the residuals must be normally distributed with a variance independent from the `Height`: `e ~ N(0,s^2)`. That is checked with a QQ-plot, as well a scatterplot.
+
+Note that `95%` confidence interval bands can be plotted: the are the narrowest in the mean `Height` and spread as we go further away from that average.
