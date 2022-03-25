@@ -417,7 +417,7 @@ The regression line is found by minimizing the squared error from the data point
 
 Note that when the parameters of the model are solved:
 
-- The line predicts the estimation of the mean for a given independent variable value
+- The line predicts the estimation of the mean for a given independent variable value: `E[y|x]`
 - If we go out of the range of our dataset, we are extrapolating, which is dangerous; the model fits the current data, nothing else!
 
 ![Linear Regression: Cartwheel example](./pics/linear_regression_example.png)
@@ -426,7 +426,7 @@ As important as the values of the parameters is the **inference of the linear re
 
 - Obtain standard error: `SE`
 - Obtain the `T` statistic for the parameter(s): `T = (Parameter Value - H0) / SE`.
-- Get the `p-value` of the `T` statistic (1- or 2-sided, depending on the `H0` definition).
+- Get the `p-value` of the `T` statistic (1- or 2-sided, depending on the `H0` definition; remember that the 1-sided value must be halved!).
 
 ![Linear Regression Inference: Cartwheel example](./pics/linear_regression_example_inference.png)
 
@@ -434,4 +434,49 @@ The confidence interval of `95%` is equivalently computed and can be seen next t
 
 Finally, the main assumption must be checked: the residuals must be normally distributed with a variance independent from the `Height`: `e ~ N(0,s^2)`. That is checked with a QQ-plot, as well a scatterplot.
 
-Note that `95%` confidence interval bands can be plotted: the are the narrowest in the mean `Height` and spread as we go further away from that average.
+Note that `95%` confidence interval bands can be plotted: these are the narrowest in the mean `Height` and spread as we go further away from that average; the formula is beyond the scope of the course.
+
+Next, we could add other variables, such as the binary variable `Complete = {0,1}`, which captures whether the cartwheel was completely done or not. With that, the model changes, and the parameters and their significances are different! Note that each parameter mus be interpreted as if the other variables were constant.
+
+![Linear Regression with Multiple Variables: Cartwheel example](./pics/linear_regression_example_multiple_variables.png)
+
+![Linear Regression with Multiple Variables, Inference: Cartwheel example](./pics/linear_regression_example_multiple_variables_inference.png)
+
+We see that taking the 1-sided hypothesis, the slope of the `Height` turns out to be significant: `p-value = 0.0425 < 0.05`.
+
+How is that possible? See Forum questions in the dedicated section below.
+
+### 2.2. Linear Regression: Reading - `Stats_with_Python_Linear-Regression-Overview.pdf`
+
+Notes I made while reading the PDF.
+
+The "linear" word of linear regression refers to the linearity of the parameters `b_i`, not the linearity of the variables; in fact, we can have linear regression with polynomial terms of the variables. When these polynomial terms are `x_1*x_2`, we have **interactions**. When including interactions, it is good to normalize the variable values (substract the mean).
+
+Note that linear regression computes **estimated** parameters `b_i` which are inferred to the real parameters of the population model; one should differentiate between `b_hat` and `b`.
+
+With linear regression we compute th expected value or mean of `y`: `E[y|x]`. However, as important as the mean, is the variance: `Var[y|x]`, which is not reported. It is usually assumed that the variance is constant: **homoscedasticity**; although that is not a had condition, most methods work better if it is fulfilled.
+
+Even though we have a clear and significant linear model, we cannot talk about "causality"; instead, prefer "association". Causal relationship require often experimental and very well designed studies.
+
+The major factor for the uncertainty of a parameter estimation is the sample size. However, the variances in the data also affect. We have different variances that affect the model differently:
+- The variance or scatter of the dependent variable around its predicted mean is bad
+- The variance or the scatter of the independent variables around their mean is good
+- The less correlated the independent variables are the better, because that way more variability can be clearly explained
+
+The pearson correlation `r` squared is `R^2`; `R^2 in [0,1]` is the proportion of explained variance: it should be as big as possible. However, very high `R^2` values might be related to **overfitting**; in that case, the model cannot generalize well.
+
+Categorical variables can be used in linear regression if we encode them as **indicator variables**: `0,1`. These are dummy variables or the one-hot encoding; the category that is dropped is called the reference level.
+
+**Residuals** are the differences `e = y - y_hat`, and we should always plot them against the fitted values `y_hat`. The scatterplot should be completely random; if there is any relationship: the variance changes! The linear model does not capture the data correctly. For instance, that could happen if we fit a line in a U-shaped point cloud.
+
+### 2.X Forum Questions
+#### Question 1
+
+In week two, the Cartwheel dataset is used to introduce the methods around linear regression. When the significance of the parameters is checked, the `Height` variable becomes significant when the variable `Complete` is introduced to the model.
+
+How is that possible? It seems to me that this example shows how unreliable the methods used for inference are in general -- or at least, that we should always take the conclusions with a grain of salt. If we add another variable to our model, significances of the previous parameters might change; thus, we can take a model with non-significant parameters and add variables until we make one of the previous ones significant.
+
+Or where is the error in the logic of my thoughts?
+
+Additionally, the scatterplot `Height vs. CWDistance` is already dubious: if the two units with the largest `CWDistance` are removed, the point cloud seems completely random. The R^2 value already accounts for it with all the units of the dataset: shouldn't we stop doing any analysis after seeing this low R^2 value?
+
