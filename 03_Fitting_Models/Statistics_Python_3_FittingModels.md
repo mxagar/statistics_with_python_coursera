@@ -485,7 +485,26 @@ A paper is referenced and provided which displays how it is possible to have com
 
 ![Ancombe's Quartet: Different Data with Same Statistics](./pics/ancombes_quartet.png)
 
-### 2.X Forum Questions
+### 2.4 Multicolinearity (Personal Notes)
+
+I made these notes after watching some videos related to multicolinearity, pointed out by Brian from the course forum, after my questions.
+
+[What is Multicollinearity?](https://www.youtube.com/watch?v=Cba9LJ9lS8s)
+
+In short, multicolinearity occurs when independent variables are correlated. When that happens, the standard error of them increases and their significance decreases. Thus, although the prediction model is correct, the siginificance of each parameter is lower.
+
+When variables are perfectly correlated, the solution cannot be found. As a rule of thumb, a correlation of 0.9 is given as a threshold.
+
+Possible methods to deal with multicolinearity (after having computed the correlation matrix):
+
+- Remove or combine the variables that are correlated
+- If one-hot-encoding is applied, remove the reference dummy variable
+- Apply PCA
+- Use ridge regression = regularized regression
+
+However, recall that the prediction model is correct if the prarmeters can be solved. The multicolinearity issue is more relate to the inference: hypothesis tests and confidence intervals.
+
+### 2.5 Forum Questions
 #### Question 1
 
 In week two, the Cartwheel dataset is used to introduce the methods around linear regression. When the significance of the parameters is checked, the `Height` variable becomes significant when the variable `Complete` is introduced to the model.
@@ -495,4 +514,69 @@ How is that possible? It seems to me that this example shows how unreliable the 
 Or where is the error in the logic of my thoughts?
 
 Additionally, the scatterplot `Height vs. CWDistance` is already dubious: if the two units with the largest `CWDistance` are removed, the point cloud seems completely random. The R^2 value already accounts for it with all the units of the dataset: shouldn't we stop doing any analysis after seeing this low R^2 value?
+
+#### Answer 1
+
+Hi Mikel :)
+
+Many thanks for sharing these questions.
+
+I think that you might want to explore multicollinearity, which definitely leads to the regression issues that you noted.
+
+Please let me know if any of this is helpful (or not)!
+
+Although not mathematical, this video from Zed Statistics is a nice overview...
+
+https://www.youtube.com/watch?v=Cba9LJ9lS8s
+
+And this Stackexchange post does a great job of presenting a geometric perspective...
+
+https://stats.stackexchange.com/questions/70899/what-correlation-makes-a-matrix-singular-and-what-are-implications-of-singularit/
+
+And this PDF from a course at CMU gives a matrix algebra perspective on multicollinearity...
+
+https://www.stat.cmu.edu/~larry/=stat401/lecture-17.pdf
+
+This technical document from NCSS is also a very nice review of sources of multicollinearity, and presents ridge regression as a method for addressing multicollinearity...
+
+https://ncss-wpengine.netdna-ssl.com/wp-content/themes/ncss/pdf/Procedures/NCSS/Ridge_Regression.pdf
+
+These courses from PSU all cover Ridge Regression...
+
+https://online.stat.psu.edu/stat857/node/155/
+
+https://online.stat.psu.edu/stat462/node/177/
+
+https://online.stat.psu.edu/stat501/lesson/12
+
+And the same with this page from Columbia...
+
+https://www.publichealth.columbia.edu/research/population-health-methods/ridge-regression
+
+This poster session from a SAS walks through the ridge regression process (albeit in SAS)...
+
+https://www.sas.com/content/dam/SAS/support/en/sas-global-forum-proceedings/2018/2825-2018.pdf
+
+Ridge regression isn't the only option for dealing with multicollinearity but it is widely used in practice.  Most applied courses in regression will spend time on it.
+
+### 2.6 Logistic Regression: Binary (Categorical) Dependent Variables
+
+Example with the cartwheel dataset:
+
+- Independent variable: age
+- Dependent variable: we want to predict if the subjects finish/complete the cartwheel
+
+The binary classification model of the logistic regression is the following:
+
+`logit(p) = ln(p/(1-p))`: logit or logistic function that maps a probability to all real numbers
+
+- `p in [0,1]` is the probability of an occurrence
+- `logit(0) = -inf; logit(1) = inf` 
+
+`logit(y_hat) = b_0 + b_1*x`
+
+Note that the logistic functin is the inverse of the sigmoid function:
+- The sigmoid maps any real number to `[0,1]`
+- The logistic maps any probability `[0,1]` to the real numbers
+
 
