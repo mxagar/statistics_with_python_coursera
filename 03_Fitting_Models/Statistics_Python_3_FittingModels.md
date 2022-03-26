@@ -456,9 +456,13 @@ Note that linear regression computes **estimated** parameters `b_i` which are in
 
 With linear regression we compute th expected value or mean of `y`: `E[y|x]`. However, as important as the mean, is the variance: `Var[y|x]`, which is not reported. It is usually assumed that the variance is constant: **homoscedasticity**; although that is not a had condition, most methods work better if it is fulfilled.
 
-Even though we have a clear and significant linear model, we cannot talk about "causality"; instead, prefer "association". Causal relationship require often experimental and very well designed studies.
+Even though we have a clear and significant linear model, we cannot talk about "causality"; instead, prefer "association". Causal relationship require often experimental and very well designed studies. A good example that shows that association is not causation is the relationship between use of social media and anxiety: people that use more social media are more anxious, why is that?
+- More young people use social media and young people are more anxious?
+- Introverts use more social media and are more anxious?
+- ... there can be many hidden causes behind, social media does not need to cause anxiety.
 
 The major factor for the uncertainty of a parameter estimation is the sample size. However, the variances in the data also affect. We have different variances that affect the model differently:
+
 - The variance or scatter of the dependent variable around its predicted mean is bad
 - The variance or the scatter of the independent variables around their mean is good
 - The less correlated the independent variables are the better, because that way more variability can be clearly explained
@@ -468,6 +472,18 @@ The pearson correlation `r` squared is `R^2`; `R^2 in [0,1]` is the proportion o
 Categorical variables can be used in linear regression if we encode them as **indicator variables**: `0,1`. These are dummy variables or the one-hot encoding; the category that is dropped is called the reference level.
 
 **Residuals** are the differences `e = y - y_hat`, and we should always plot them against the fitted values `y_hat`. The scatterplot should be completely random; if there is any relationship: the variance changes! The linear model does not capture the data correctly. For instance, that could happen if we fit a line in a U-shaped point cloud.
+
+### 2.3 The Importance of Data Visualization
+
+A paper is referenced and provided which displays how it is possible to have completely different datasets which lead to the same statistics: mean, std., correlation, etc. The lesson is: always try to visualize the data!
+
+`./MatejkaFitzmaurice_SameStatsDifferentGraphs_2017.pdf`
+
+[Same Stats, Different Graphs: Generating Datasets with Varied Appearance and Identical Statistics through Simulated Annealing](https://www.autodesk.com/research/publications/same-stats-different-graphs)
+
+![Datasaurus Paper: Different Data with Same Statistics](./pics/datasaurus_examples.png)
+
+![Ancombe's Quartet: Different Data with Same Statistics](./pics/ancombes_quartet.png)
 
 ### 2.X Forum Questions
 #### Question 1
