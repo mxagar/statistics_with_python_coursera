@@ -24,6 +24,17 @@ Overview of contents:
    - 1.6 Links & Readings
    - 1.7 Python Lab - `01_ModelFitting_Introduction.ipynb`
 2. Fitting Models to Independent Data: Linear & Logistic Regression
+   - 2.1 Linear Regression: Continuous Dependent Variables
+     - Inference with Linear Regression: Hypothesis Tests and Confidence Intervals of the Parameters
+   - 2.2. Linear Regression: Reading - `Stats_with_Python_Linear-Regression-Overview.pdf`
+   - 2.3 The Importance of Data Visualization
+   - 2.4 Multicolinearity (Personal Notes)
+   - 2.5 Forum Questions
+   - 2.6 Logistic Regression: Binary (Categorical) Dependent Variables
+     - Inference with Logistics Regression: Hypothesis Tests and Confidence Intervals of the Parameters
+   - 2.7 Logistic Regression: Reading - `Stats_with_Python_Logistic-Regression-Overview.pdf`
+   - 2.8 Python Lab - `02_LinearLogisticRegression_NHANES.ipynb`
+3. Fitting Models to Dependent Data: Multilevel and Marginal Models
 
 ## 1. Considerations for Statistical Modeling
 
@@ -422,6 +433,8 @@ Note that when the parameters of the model are solved:
 
 ![Linear Regression: Cartwheel example](./pics/linear_regression_example.png)
 
+#### Inference with Linear Regression: Hypothesis Tests and Confidence Intervals of the Parameters
+
 As important as the values of the parameters is the **inference of the linear regression**. With the inference, we conclude if the result can be transferred from our sample to the population; in other words, the significance of the parameters and their confidence intervals are obtained. In a linear regression, the most important parameter is `b_1`, since it's the one that measures the relationship between the dependent and the independent parameter. For that, we follow the usual methods:
 
 - Obtain standard error: `SE`
@@ -568,15 +581,412 @@ Example with the cartwheel dataset:
 
 The binary classification model of the logistic regression is the following:
 
-`logit(p) = ln(p/(1-p))`: logit or logistic function that maps a probability to all real numbers
-
-- `p in [0,1]` is the probability of an occurrence
-- `logit(0) = -inf; logit(1) = inf` 
-
 `logit(y_hat) = b_0 + b_1*x`
 
-Note that the logistic functin is the inverse of the sigmoid function:
-- The sigmoid maps any real number to `[0,1]`
-- The logistic maps any probability `[0,1]` to the real numbers
+- odds of a probability: `p/(1-p)`: ratio of probability of one event vs. the complementary
+- `logit(p) = ln(p/(1-p))`: logit or logistic function that maps a probability to all real numbers; aka. **log-odds** function
+- `logit(0) = -inf; logit(1) = inf` 
+- `p in [0,1]` is the probability of an occurrence
+- `y_hat` is `p`; note that `y` can be `{0,1}`
 
+Note that the logistic function is the inverse of the sigmoid function:
+
+- The sigmoid maps any real number to `[0,1]`.
+- The logistic maps any probability `[0,1]` 
+to the real numbers `(-inf,inf)`.
+- The sigmoid can be used to convert the log-odds to the probability: `sigmoid(logit(p)) = p`.
+- The exponential can be used to convert log-odds to odds: `exp(logit(p)) = p / (1-p)`
+- `y` takes only two values: `{0,1}`.
+- `y_hat` tries to approximate `y`.
+- Residual plots are most informative if `x` takes a wide range of values.
+
+![Logistic Regression: Interpretation](./pics/logistic_regression_interpretation.png)
+
+Personal note: **the course video is the worst explanation of the logistic regression I have ever seen.**
+
+#### Inference with Logistics Regression: Hypothesis Tests and Confidence Intervals of the Parameters
+
+`Confidence Interval: Best Estimate +- Margin of Error`
+
+`Sample slope +- Factor * Estimated Standard Error`
+
+For logistic regression, the multiplier or factor is the `Z` statistic, i.e., the standard deviation statistic for the level of confience (usually 95%) we would like.
+
+`b_1 +- Z(0.95) * SE(b_1)`
+
+Recall `Z(0.95) = 1.96`.
+
+Thus, in the example, we have:
+
+- `b_1 = 0.2096`
+- `CI-95% = -0.126, 0.545`
+
+Since the CI contains the slope 0, the slope doesn't seem significant.
+
+Similarly, the hypothesis test can be performed:
+
+`H0: b_1 = 0`
+`Ha: b_1 != 0`
+
+Test statistic: `(b_1 - 0 ) / SE(b_1) = 1.2225 -> p(Z=1.2225) = 0.221`: `H0` cannot be rejected for a typical `alpha = 0.05`.
+
+### 2.7 Logistic Regression: Reading - `Stats_with_Python_Logistic-Regression-Overview.pdf`
+
+The logistic function as a link function which maps a probability value to the real numbers: `[0,1] -> (-inf,inf)`:
+
+- `logit(p) = ln(p/(1-p))`
+- `p`: probability that `y = 1`.
+- `1-p`: probability that `y = 0`.
+- Odds: `p/(1-p)`; if odds is 3, we are 3x more likely to see a 1.
+
+Thus, the logistid function is also called the **log odds**: `logit(p) = ln(p/(1-p))`.
+
+In order to better interpret the slope parameters, we need to invert the `ln()` by exponentiating the slope parameter: then, we have the odds change produced by a unit increase of the slope-variable maintaining constant the rest.
+
+`logit(y_hat) = logit(p) = ln(p/1-p) = b_0 + b_1*age + b_2*sex = -5.5 + 0.04*age -0.3*sex`
+
+Age variable, age slope parameter: `0.04` -> `exp(0.04) = 1.04`: while maintaining sex contant, if the age increases one unit, we have 1.04 times more odds of being positive. Important remark: the interpretation of the odds is **multiplicative**: `1.04` means `1.04 x` odds of having a prositive.
+
+## 2.8 Python Lab - `02_LinearLogisticRegression_NHANES.ipynb`
+
+This notebook shows how to apply linear and logistic regression on the [NHANES](https://www.cdc.gov/nchs/nhanes/index.htm) dataset. The models are computed and analyzed.
+
+Recall that the [NHANES](https://www.cdc.gov/nchs/nhanes/index.htm) dataset belongs to a designed complex study; as such, we should apply weights to the values. However, the analysis here is simplified, to focus on linear and logistic regression.
+
+Overview:
+
+1. Linear Regression
+    - 1.1 A Model with One Variable
+    - 1.2 Correlation and R-squared
+    - 1.3 Adding a Second Variable
+    - 1.4 A Model with Three Variables
+    - 1.5 Visualization of the Fitted Model
+    - 1.6 Residuals
+    - 1.7 Added Variable Plot (Generalized Linear Models, GLM)
+2. Logistic Regression
+    - 2.1 Odds
+    - 2.2 Logistic Regression Model with One Independent Variable
+    - 2.3 Model with Two Variables
+    - 2.4 Model with Three Variables
+    - 2.5 Visualization of the Fitted Models
+    - 2.6 Residuals
+3. Week 2 Assessment Comutations
+
+In the following, a summary of the python commans is colledted. Look at the notebook for a more complete understanding with the outputs and the plots.
+
+```python
+
+### --- 1. Linear Regression
+
+%matplotlib inline
+import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+import statsmodels.api as sm
+import numpy as np
+
+# Read the 2015-2016 wave of NHANES data
+da = pd.read_csv("nhanes_2015_2016.csv")
+
+# Take analyzed columns, and drop rows with any missing values.
+vars = ["BPXSY1", "RIDAGEYR", "RIAGENDR", "RIDRETH1", "DMDEDUC2", "BMXBMI", "SMQ020"]
+da = da[vars].dropna()
+
+## -- 1.1 A Model with One Variable
+
+# Linear Regression: Ordinary Leat Squares
+# Systolic Blood Pressure = b_0 + b_1 * Age
+model = sm.OLS.from_formula("BPXSY1 ~ RIDAGEYR", data=da)
+result = model.fit()
+result.summary()
+
+# The slope of age is significant
+# However, always compare:
+# - expected range of the independent variable of interest: age
+# - vs. std of dependent variable: blood pressure
+# Example: Age range of 20 years
+delta_age = 20
+# Difference in blood pressure
+age_change = result.params['RIDAGEYR']*delta_age
+age_change
+# Std of blood pressure
+da.BPXSY1.std()
+# A factor of 2x is correct
+da.BPXSY1.std() / age_change
+
+## -- 1.2 Correlation and R-squared
+
+cc = da[["BPXSY1", "RIDAGEYR"]].corr()
+cc
+
+# Correlation
+cc.BPXSY1.RIDAGEYR
+
+# R-squared: corr^2: strength of a prediction (not very strong in this model)
+# 21% of the variance can be explained with the model:
+# 21% of blood pressure changes can be explained by age
+cc.BPXSY1.RIDAGEYR**2
+
+# Another way to compute the R-squared
+# is to compute the correlation between real and the fitted values = predictions
+# This is more handy with several variables, because the formula does not depend
+# on the independent varaibles, but just the dependent/predicted variable
+cc = np.corrcoef(da.BPXSY1, result.fittedvalues)
+cc[0,1]**2
+
+
+## -- 1.3 Adding a Second Variable
+
+# Create a labeled version of the gender variable
+# Categorical variables should be converted to strings
+# and then, SM converts them to dummy variables.
+# The intercept contains the effect of the reference dummy (i.e., value 0),
+# and the other level (if binary) is expressed in the variable coefficient
+da["RIAGENDRx"] = da.RIAGENDR.replace({1: "Male", 2: "Female"})
+
+# Insight 1: When uncorrelate dvariables are added to the model
+# the value of the previous slope params barely changes
+# Insight 2: Males have on average 3.23 point more blood pressure, mainatining age constant
+# Note: RIAGENDRx[T.Female] is the refenece level, contained in the intercept;
+# the coeff. RIAGENDRx[T.Male] is the difference added if the level is changed to the other level
+model = sm.OLS.from_formula("BPXSY1 ~ RIDAGEYR + RIAGENDRx", data=da)
+result = model.fit()
+result.summary()
+
+# Check correlation of variables: -0.02 -> negligible
+da[["RIDAGEYR", "RIAGENDR"]].corr()
+
+# R-squaredL still not that strong
+cc = np.corrcoef(da.BPXSY1, result.fittedvalues)
+print(cc[0, 1]**2)
+
+## -- 1.4 A Model with Three Variables
+
+model = sm.OLS.from_formula("BPXSY1 ~ RIDAGEYR + BMXBMI + RIAGENDRx", data=da)
+result = model.fit()
+result.summary()
+
+# Check correlations: they are weak, but change the slopes a bit
+da[["RIDAGEYR", "RIAGENDR", "BMXBMI"]].corr()
+
+# R-squared: still not that strong
+cc = np.corrcoef(da.BPXSY1, result.fittedvalues)
+print(cc[0, 1]**2)
+
+## -- 1.5 Visualization of the Fitted Model
+
+from statsmodels.sandbox.predict_functional import predict_functional
+
+# Fix certain variables at reference values.
+# Not all of these variables are used here,
+# but we provide them with a value anyway
+# to prevent a warning message from appearing.
+values = {"RIAGENDRx": "Female",
+          "RIAGENDR": 1,
+          "BMXBMI": 25,
+          "DMDEDUC2": 1,
+          "RIDRETH1": 1,
+          "SMQ020": 1}
+
+# We pass 
+# - the sm results object,
+# - the focus varoable: the variable that is changed, x (rest is fixed)
+# - dictionary of fixed values
+# The returned values are
+# - the predicted values (pr): blood pressure,
+# - the confidence bands (cb): upper and lower blood pressure with 95% confidence,
+# - and the function values (fv): slope-variable that is changed (focus variable).
+pr, cb, fv = predict_functional(result=result,
+                                focus_var="RIDAGEYR",
+                                values=values,
+                                ci_method="simultaneous")
+
+# Confidence bands seem to be quite constant: good
+ax = sns.lineplot(x=fv, y=pr, lw=4)
+ax.fill_between(x=fv, y1=cb[:, 0], y2=cb[:, 1], color='grey', alpha=0.4)
+ax.set_xlabel("Age")
+_ = ax.set_ylabel("SBP")
+
+# Same as before, but using the BMI as the focus variable
+# Remove BMI from fixed values, add age
+del values["BMXBMI"] # Delete this as it is now the focus variable
+values["RIDAGEYR"] = 50
+pr, cb, fv = predict_functional(result=result,
+                                focus_var="BMXBMI",
+                                values=values,
+                                ci_method="simultaneous")
+
+# Confidence bands spread at the extremes: there is less certainty with BMI, as compared to age
+ax = sns.lineplot(x=fv, y=pr, lw=4)
+ax.fill_between(x=fv, y1=cb[:, 0], y2=cb[:, 1], color='grey', alpha=0.4)
+ax.set_xlabel("BMI")
+_ = ax.set_ylabel("SBP")
+
+## -- 1.6 Residuals
+
+# Residuals plot
+# This helps us assess whether the variance of the residuals is constant or not
+# We can see that there is a small increase of the variance around the mean
+pp = sns.scatterplot(x=result.fittedvalues, y=result.resid)
+pp.set_xlabel("Fitted values")
+_ = pp.set_ylabel("Residuals")
+
+# Component-Plus-Residual Plot (CCPR) = Partial Residual Plot
+# All but one independent variable are fixed at reference values; the remaining is the focus variable. Then, the residuals around the predicted mean are plotted.
+# This is not part of the main Statsmodels API,
+# so needs to be imported separately
+from statsmodels.graphics.regressionplots import plot_ccpr
+# Focus variable: exog_idx = age
+# Vertical axis: only differences are meaningful, not absolute values
+# Example: between ages 18-80, blood pressure average increases 30 points
+# We observe: residuals have a larger spread at larger ages
+ax = plt.axes()
+plot_ccpr(results=result, exog_idx="RIDAGEYR", ax=ax)
+ax.lines[0].set_alpha(0.2) # Reduce overplotting with transparency
+_ = ax.lines[1].set_color('orange')
+
+## -- 1.7 Added Variable Plot (Generalized Linear Models, GLM)
+
+# We fit the model with GML (Generalized Linear Models), which allow non-linear relationships. Then, the mean estimation is plotted: indeed, non-linear effects are visualized.
+# This is not part of the main Statsmodels API, so needs to be imported separately
+from statsmodels.graphics.regressionplots import add_lowess
+# This is an equivalent way to fit a linear regression model, it needs to be
+# done this way to be able to make the added variable plot
+model = sm.GLM.from_formula("BPXSY1 ~ RIDAGEYR + BMXBMI + RIAGENDRx", data=da)
+result = model.fit()
+result.summary()
+# Focus variable (age) vs outcome (blood pressure), both centered around their mean
+# We see that prior to 15 years old (corrected with mean), the blood pressure is rather flat
+fig = result.plot_added_variable("RIDAGEYR")
+ax = fig.get_axes()[0]
+ax.lines[0].set_alpha(0.2)
+_ = add_lowess(ax)
+
+### -- 2. Logistic Regression
+
+## -- 2.1 Odds
+
+# Outcome/Dependent variable:
+# whether a person has smoked at least 100 cigarettes in their lifetime
+da["smq"] = da.SMQ020.replace({2: 0, 7: np.nan, 9: np.nan})
+
+# We create table percentage of smokers per gender
+# Odds (smoker vs. non-smoker): p/(1-p)
+# Odd 1 == 50%-50%
+c = pd.crosstab(da.RIAGENDRx, da.smq).apply(lambda x: x/x.sum(), axis=1)
+c["odds"] = c.loc[:, 1] / c.loc[:, 0]
+c
+
+# Odd ratio: a man has 2.4 times greater idds of smoking than a woman
+c.odds.Male / c.odds.Female
+
+# Log-odds: 0 means we have odds of 1 <-> probability p = 0.5
+c["logodds"] = np.log(c.odds)
+c
+
+## -- 2.2 Logistic Regression Model with One Independent Variable
+
+# Logistic Regression is one type of Generalized Linear Model (GLM),
+# for that, we need to pass the family sm.families.Binomial().
+# Categorical variables are converted into dummy variables:
+# each level is a variable 0/1 and has its own coefficient
+# except the reference level, whose effect is included in the intercept
+model = sm.GLM.from_formula("smq ~ RIAGENDRx", family=sm.families.Binomial(), data=da)
+result = model.fit()
+result.summary()
+
+# When we conduct logistic regression with one binary independent variable
+# the slope coefficient of that variable is equal
+# to the log-offs difference between the groups of that independent variable
+c.logodds.Male - c.logodds.Female
+
+## -- 2.3 Model with Two Variables
+
+# We update the formula to include two independent variables
+# Usually, the slope coefficients change much less in logistic regression
+# when added new variables
+model = sm.GLM.from_formula("smq ~ RIDAGEYR + RIAGENDRx", family=sm.families.Binomial(), data=da)
+result = model.fit()
+result.summary()
+
+# Slope coefficients need to be transformed
+# Current coefficients are log-odds
+# It is much easier to interpret odds
+result.params['RIDAGEYR']
+
+# The odds of increasing age in one unit for smoking, maintaining the rest constant
+np.exp(result.params['RIDAGEYR'])
+
+# However, note that log-odds are additive
+# Example: we comparare a 30 year old and a 50 y.o. male
+# Which are the odds of the older to smoke?
+(50-30)*result.params['RIDAGEYR']+result.params['RIAGENDRx[T.Male]']
+
+# A male 20 years older has 3.4 times the odds of a 20 yourger male of smoking
+np.exp((50-30)*result.params['RIDAGEYR']+result.params['RIAGENDRx[T.Male]'])
+
+## -- 2.4 Model with Three Variables
+
+# Create a labeled version of the educational attainment variable
+# otherwise, the values are treated as numeric, even though they ae categorical
+# Categorical variables need to be strings, which are converted into dummy variables:
+# each level is a binary variable 0/1, except the reference level, inclided in the intercept
+da["DMDEDUC2x"] = da.DMDEDUC2.replace({1: "lt9", 2: "x9_11", 3: "HS", 4: "SomeCollege",
+                                       5: "College", 7: np.nan, 9: np.nan})
+
+model = sm.GLM.from_formula("smq ~ RIDAGEYR + RIAGENDRx + DMDEDUC2x", family=sm.families.Binomial(), data=da)
+result = model.fit()
+result.summary()
+
+## -- 2.5 Visualization of the Fitted Models
+
+values = {"RIAGENDRx": "Female",
+          "RIAGENDR": 1,
+          "BMXBMI": 25,
+          "DMDEDUC2": 1, 
+          "RIDRETH1": 1,
+          "SMQ020": 1,
+          "DMDEDUC2x": "College",
+          "BPXSY1": 120}
+
+pr, cb, fv = predict_functional(result=result,
+                                focus_var="RIDAGEYR",
+                                values=values,
+                                ci_method="simultaneous")
+
+# Log-odds plot
+ax = sns.lineplot(x=fv, y=pr, lw=4)
+ax.fill_between(x=fv, y1=cb[:, 0], y2=cb[:, 1], color='grey', alpha=0.4)
+ax.set_xlabel("Age")
+ax.set_ylabel("Smoking")
+
+# Probability plot: we transform the logg-odds in probabilities with the sigmoid()
+# sigmoid(z) = 1 / (1 + exp(-z))
+pr1 = 1 / (1 + np.exp(-pr))
+cb1 = 1 / (1 + np.exp(-cb))
+ax = sns.lineplot(x=fv, y=pr1, lw=4)
+ax.fill_between(x=fv, y1=cb1[:, 0], y2=cb1[:, 1], color='grey', alpha=0.4)
+ax.set_xlabel("Age", size=15)
+ax.set_ylabel("Smoking", size=15)
+
+## -- 2.6 Residuals
+
+fig = result.plot_partial_residuals("RIDAGEYR")
+ax = fig.get_axes()[0]
+ax.lines[0].set_alpha(0.2)
+_ = add_lowess(ax)
+
+fig = result.plot_added_variable("RIDAGEYR")
+ax = fig.get_axes()[0]
+ax.lines[0].set_alpha(0.2)
+_ = add_lowess(ax)
+
+fig = result.plot_ceres_residuals("RIDAGEYR")
+ax = fig.get_axes()[0]
+ax.lines[0].set_alpha(0.2)
+_ = add_lowess(ax)
+
+```
+
+## 3. Fitting Models to Dependent Data: Multilevel and Marginal Models
 
