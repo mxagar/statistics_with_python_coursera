@@ -990,3 +990,148 @@ _ = add_lowess(ax)
 
 ## 3. Fitting Models to Dependent Data: Multilevel and Marginal Models
 
+This section analyzes independent variables that are correlated between each other. Models need to reflect that correlation.
+
+Examples:
+
+- Correlations within clusters, e.g., same neighborhood.
+- Longitudinal studies: repeated measures along time.
+
+In those situations, we can use **multi-level models**, aka. **hierarchical models**. These models allow the coefficients (i.e., intercept and slope) to vary across different measurement units or subjects from random clusters defined in higher levels; thus, the variance of those coefficients is additionally estimated.
+
+Therefore, we estimate coefficients or parameters, as before, and in addition we have two new things:
+
+- Variability of those coefficients is measured
+- We can explain that variance for each cluster level
+
+To allow the coefficients vary, we include random effects to them; that is reflected in equations represented in two levels:
+
+Level 1 equation(s): The `b` values are not parameters anymore, but random coefficients:
+
+- `y_ij = b_0j + b_1j*x_1ij + e_ij`: observation `i` nested in cluster `j`
+
+Level 2 equation(s): the random coefficients from level 2 are defined as the sum of a fixed parameter and a random varoable:
+
+- `b_0j = b_0 + u_0j`
+- `b_1j = b_1 + u_1j`
+
+Thus, each observation in each cluster has unique coefficients. Note that `u` is a random variable, but the same random distirbution in the cluster. These are assumed to follow a normal distribution with mean 0. **We are interested in obtaining the variance of `u`**.
+
+The inclusion of random effects in the coefficients accounts for correlations between variables; without random effects, we would assume independent data.
+
+If we have dependent (correlated) data, using random effects in the coefficients improves considerable the model fit. Omitting random effects when they are important is the same type of model specification errors as omitting the fixed effect of an important predictor variable.
+
+The main motivation for choosing **multi-level** models is the fact that we can distinguish the **between-cluster** and **within-cluster** variance of the outcome; if we are not interested in that distinction, we should use other models for dependent data.
+
+To sum up, with **multi-level** models:
+
+- We need data organized into clusters: clinics, subjects, neighborhoods, etc.; in each cluster, several correlated observations are recorded.
+- Clusters must be randomly sampled from larger clusters.
+- We wish to model the correlation.
+- We have explicit research interest in estimating between-cluster variance in the regression coefficients.
+
+Example: we measure an outcome according to age, time and subject:
+
+![Multi-level model](./pics/multilevel_model_example_1.png)
+
+![Multi-level model](./pics/multilevel_model_example_2.png)
+
+[Visualization on multi-level or hierarchical models by Michael Freeman](http://mfviz.com/hierarchical-models/)
+
+Note that multi-level models are also known as:
+
+- Random coefficient models
+- Varying coefficientmodels
+- Subject.soecific models
+- Hierarchical linear models
+- Mixed-effects models
+
+### 3.1 Multilevel Linear Regression Models - Continuous Dependent Variables (Outcome)
+
+Recall that the multi-level model has **fixed and random effects**:
+
+- Fixed effects are constant paramaters that determine the mean: `b`
+- Random effects are random variables represented with distributions centered around 0: `u`
+
+Ultimately, we are interested in determining the  variance of those random effects. These are represented ina covariance matrix in which covariance between the `u` terms is allowed (i.e., and estimated):
+
+![Multi-level: Variance](./pics/multilevel_variance.png)
+
+Multi-level models can be also specified with level 1 & level 2 equations:
+
+- Level 1 has random coefficients.
+- Level 2 breaks down those random coefficients into fixed parameter and random variable `u`; it is as if we had an intercept-only regression in level 2.
+
+![Multi-level models: Level 1 & 2 Equations](./pics/multilevel_level_1_2.png)
+
+All in all, we have these parameters:
+
+- each random effect introduces one parameter (its variance)
+- and if they are allowed to be correlated, we have covariances;
+- additionally, we have the variance of the error
+- and the parameters for the fixed effects.
+
+All those parameters are estimated using **maximum likelihood estimation (MLE)**. We also get the standard errors of those parameters, thus we can perform hypothesis tests and compute confiddence intervals.
+
+We can perform **likelihood ration testing** with them; it answers this question: **does removing a given parameter change the probability of the observed data?**
+
+#### Example: European Social Survey (ESS) Dataset
+
+Example: European Social Survey (ESS) Dataset
+
+- Data collected from face-to-face interviews, sample of 1,703 adults in Belgium
+- Cluster sampling is performed, weights need to be applied
+- Interested in reviewers effects: reviewer ID is a variable; random effects account for this, so observations are clustered by interviewer
+
+The goal is to analyze whether trust in police (TRSTPLC) is related to the attitute of helping others (PPLHLP).
+
+The results are summarized in the following slides:
+
+![Multi-level models: ESS Example Results 1](./pics/ess_example_results_1.png)
+
+![Multi-level models: ESS Example Results 2](./pics/ess_example_results_2.png)
+
+Additionally, we need to check all assumptions of the model, i.e., **model diagnostics**:
+
+![Multi-level models: ESS Example Model Diagnostics](./pics/ess_example_diagnostics.png)
+
+### 3.2 Multilevel Logistic Regression Models - Binary Dependent Variables (Outcome)
+
+The multi-level logistic regression model is equivalent to the linear regression with random effects: we have the same coefficients, but the `logit(p)` of the outcome is the predicted variable (i.e., log-odds). Assumptions and motivations hold.
+
+![Multi-level Logistic Regression Moddel](./pics/multilevel_logistic_regression.png)
+
+Model parameter estimation is more difficult; often it is not possible to write closed-form likelihood equations. Thus, these are first approximated and then optimized to obtain the parameter values.
+
+We can use the **likelihood ratio testing** for testing the obtained paramaters (hypothesis tests).
+
+An example is commented in the videos: NHANES dataset, smoker ratio; correlations are assumed within clusters. Always plot first the total proportions by cluster! We can see there if there are large variances -- that would be indicative of within-cluster correlations.
+
+### 3.3 Hiearchical Models Web App from Cal Poly
+
+A web app in which we can compute our own multi-level models in a web GUI. The results are shown in tables and plots. Also, case studies are provided (i.e., examples).
+
+[Hiearchical Models Web App](http://shiny.calpoly.sh/Hierarchical_Models/)
+
+### 3.4 What are Marginal Models and Why Do We Fit Them?
+
+As an alternative to multi-level models, **marginal models** can be used with dependent data, too. Marginal models do not account random effects, but they model within-cluster correlations.
+
+The goal is that the standard errors reflect the clustering so that we don't fall into understatements.
+
+We don't allow coefficients to randomly vary across clusters; instead, overall relationships are looked and the standard errors are computed so that they reflect the dependencies.
+
+Example: subject measurements across time
+
+- A multilevel model would yield a regression line for each subject across the time
+- A marginal model yields a unique overall regression line for all subjects across the time
+
+So, as far as I understandd, the fit is like in an ordinary linear regression?
+
+Marginal models are used when
+
+- We have clusters
+- We have no interest in modelling between-subject or between-cluster variance
+
+### 3.5 Marginal Linear Regression Models - Continuous Dependent Variables (Outcome)
+
