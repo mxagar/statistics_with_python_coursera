@@ -591,11 +591,12 @@ The binary classification model of the logistic regression is the following:
 
 Note that the logistic function is the inverse of the sigmoid function:
 
-- The sigmoid maps any real number to `[0,1]`.
+- The sigmoid maps any real number to `[0,1]`: `sigmoid(z) = 1 / (1 + exp(-z))`
 - The logistic maps any probability `[0,1]` 
 to the real numbers `(-inf,inf)`.
 - The sigmoid can be used to convert the log-odds to the probability: `sigmoid(logit(p)) = p`.
 - The exponential can be used to convert log-odds to odds: `exp(logit(p)) = p / (1-p)`
+- Thus, we can get the probability `p` from the `logit(p)` also this way: `p = exp(logit(p)) / (1 + exp(logit(p)))`
 - `y` takes only two values: `{0,1}`.
 - `y_hat` tries to approximate `y`.
 - Residual plots are most informative if `x` takes a wide range of values.
@@ -1143,11 +1144,11 @@ The following slide summarizes the model:
 
 Variables and notation:
 
-- `i`: cluster `i`
+- `i`: cluster `i` (recall, it can be a subject)
 - `p`: independent variables
-- `y_ti`: ??
-- `y_i`: all `n_i` measurements of the outcome within cluster `i`
-- `V_i`: variance matrix 
+- `y_ti`: outcome for time point `t` within cluster `i`
+- `y_i`: all `n_i` measurements of the outcome within cluster `i`; the mean value is the result of multiplying the independent variable matrix with the estimated parameter vector: `X_i * B`
+- `V_i`: variance matrix associated with `y_i`
 
 ![Marginal Regression Model: Iteratively Solving the Equations 1](./pics/marginal_regression_model_solution_1.png)
 
@@ -1164,8 +1165,26 @@ We choose different strcutures for the variance/correlation matric and the **QIC
 
 ### 3.6 Marginal Logistic Regression - Binary Dependent Variables (Outcome)
 
+The **Generalized Estimating Equations (GEE)** already account for non-normal distirbutions, thus we can work with binary outcomes.
+
+The assumptions and notes done for the linear regression with margin models apply here, too.
+
+Since in logistic repression we are predicting log-odds or `logit(p)`, we need to invert it to get the final parameters using the sigmoid:
+
+`mu_ti = E(y_ti | X_ti) = sigmoid(X_ti * B) = exp(X_ti * B) / (1 + exp(X_ti * B))`
+
+Binary variables follow a Bernoulli distribution; we know that those variables the variance can be obtained with the mean:
+
+`mean = p -> variance = p(1-p)`
+
+Thus, we just need to choose the structure of the variance/correlation matrix for optimization and the model is fit.
+
+The estimated parameters are very simiar to the ones in multi-level modelling approach. The main difference is that in the multi-level approach we model random effects and account for between-subject differences. In the marginal model with GEE the overall variance is modelled, without evaluating between-subject variations.
 
 ##### Forum Questions
 
 Video: Marginal Linear Regression Models, min. 3
-`y_ti`
+`y_ti`: time point t in cluster i
+`y_1i`: time point 1 in cluster i
+`n_i`: total time points in cluster i
+`p`: total number of independent variables
