@@ -1126,7 +1126,7 @@ Example: subject measurements across time
 - A multilevel model would yield a regression line for each subject across the time
 - A marginal model yields a unique overall regression line for all subjects across the time
 
-So, as far as I understandd, the fit is like in an ordinary linear regression?
+So, as far as I understandd, the fit is like in an ordinary linear regression? The main difference, as I understand, is that the covariance matrix of the predictions is modelled?
 
 Marginal models are used when
 
@@ -1135,3 +1135,37 @@ Marginal models are used when
 
 ### 3.5 Marginal Linear Regression Models - Continuous Dependent Variables (Outcome)
 
+The **Generalized Estimating Equations (GEE)** are used to compute linear regression with marginal models.
+
+The following slide summarizes the model:
+
+![Marginal Regression Model](./pics/marginal_regression_model.png)
+
+Variables and notation:
+
+- `i`: cluster `i`
+- `p`: independent variables
+- `y_ti`: ??
+- `y_i`: all `n_i` measurements of the outcome within cluster `i`
+- `V_i`: variance matrix 
+
+![Marginal Regression Model: Iteratively Solving the Equations 1](./pics/marginal_regression_model_solution_1.png)
+
+![Marginal Regression Model: Iteratively Solving the Equations 2](./pics/marginal_regression_model_solution_2.png)
+
+The key idea, as I understand, is the choice of the variance matrix structure; instead of working with the variance, it is worked eauivalently with the correlations. The structure can be:
+
+- Independence: independent observations, no correlations
+- Exchangeable: constant correlation of observations in the same cluster
+- Auto-regression (first order): deyaing correlation over time
+- Unstructured: generalized structure, any correlations of observations
+
+We choose different strcutures for the variance/correlation matric and the **QIC** value of each variance structure is computed; the we select the structure that yields the **lowest value of QIC, because it is associated to the best fit**.
+
+### 3.6 Marginal Logistic Regression - Binary Dependent Variables (Outcome)
+
+
+##### Forum Questions
+
+Video: Marginal Linear Regression Models, min. 3
+`y_ti`
