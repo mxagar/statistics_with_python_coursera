@@ -1181,10 +1181,189 @@ Thus, we just need to choose the structure of the variance/correlation matrix fo
 
 The estimated parameters are very simiar to the ones in multi-level modelling approach. The main difference is that in the multi-level approach we model random effects and account for between-subject differences. In the marginal model with GEE the overall variance is modelled, without evaluating between-subject variations.
 
-##### Forum Questions
+### 3.7 Python Lab: Multi-Level and Marginal Models for Dependent Data
 
-Video: Marginal Linear Regression Models, min. 3
-`y_ti`: time point t in cluster i
-`y_1i`: time point 1 in cluster i
-`n_i`: total time points in cluster i
-`p`: total number of independent variables
+I have two notebooks covering multi-level and marginal models for dependent data:
+
+- `./lab/03_Marginal_and_Multilevel_Models.ipynb`
+- `./lab/04_Marginal_and_Multilevel_Models_NHANES.ipynb`
+
+The second one (`04`) is more applied and uses the NHANES dataset. The reader should use it for more realistic bluesprints. However, I copy here the first (`03`), since it contains the most basic commands and comparisons.
+
+Note that this week 3 covering multi-level and marginal models is poorer that I expected - the quality of the explanations is not good, and the level of detail is lower than usual; therefore, I won't extend with that topic. The code snippets here are just and introduction.
+
+In contrast to ordinary linear and logistic regression, these models make the assumption that the variables are somehow correlated; that can be due to:
+
+- Correlations within clusters; that happens when a clustered complex sample is done by dividing in neighborhoods, etc.
+- Repeated measures along the time, typical in longitudinal studies that measure variable evolution during time.
+
+Marginal and multi-level models differentiate from each other in these aspects:
+
+- Multi-level models use random coefficients, i.e., variances between clusters (subject, neighborhood, etc.) are captured as random variables or effects; in addition to them, we also have the regular fixed effects or constant coefficients. All in all, the variance of the random effects is estimated. Thus, as a result, each cluster has its own model.
+- Marginal models do not have random coefficients; instead, they have the regular linear/lohgistic regression parameters or coefficients. However, the variance between the variables is also computed to adjust the standard error of the coefficients. This allows for a more realistic inference (i.e., hypothesis testing or confidence interval computation). Additionally, that variance is computed overall, i.e., between-cluster variations are not computed, as it is done by multi-level models.
+
+The notebook `./lab/03_Marginal_and_Multilevel_Models.ipynb` uses the dataset from this publication:
+
+> Anderson, D., Oti, R., Lord, C., and Welch, K. (2009). Patterns of growth in adaptive social abilities among children with autism spectrum disorders. Journal of Abnormal Child Psychology, 37(7), 1019-1034.
+
+Variables:
+
+- AGE: the age of a child which (2-13).
+- VSAE: child's socialization.
+- SICDEGP: expressive language group at age two (1:low - 3:high).
+- CHILDID: unique child ID.
+
+Note that we have multiple measurements per child.
+
+Overview of contents:
+
+1. Multi-level Model
+    - 1.1 Significance Testing - Comparison to Regular Linear Regression
+2. Marginal Model
+    - 2.1 Comparison of Model Parameters and Standard Errors
+
+```python
+
+# Import the libraries that we will need for the analysis
+import csv 
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+import seaborn as sns
+from sklearn import linear_model
+import matplotlib.pyplot as plt
+import patsy
+from scipy.stats import chi2 # for sig testing
+from IPython.display import display, HTML # for pretty printing
+
+# Read in the Autism Data
+dat = pd.read_csv("autism.csv")
+# Drop NA's from the data
+dat = dat.dropna()
+
+dat.head()
+dat.describe()
+sns.histplot(dat['vsae'])
+
+### --- 1. Multi-level Model
+
+# Build the model
+# The formula follows the same syntax as in R
+#   V1*V2 == V1 + V2 + V1V2
+#   V1V2 is the interaction betweem variables, aka V1:V2
+# C(): treat as categorical even though it is an integer
+#   categorical variables are transformed into dummy variables: one binary variable per level
+# re_formula: random effects formula
+#   if we say '1 + age' the random intercept is computed, but it does not make sense
+#   for ager = 0 to have any value, thus we remove the intercept;
+#   besides, we'd have convergence issues
+# I understand that the re_formula is the level 2 equation for the random effects?
+mlm_mod = sm.MixedLM.from_formula(
+    formula = 'vsae ~ age * C(sicdegp)', 
+    groups = 'childid', 
+    re_formula= "0 + age", 
+    data=dat
+)
+# Run the fit
+mlm_result = mlm_mod.fit()
+# Print out the summary of the fit
+mlm_result.summary()
+
+# Age as the variable is always dangerous in relation to the intercept
+# Example: here, intercept can be interpreted as 
+# the mean socialization 
+# when a child in the first expressive language group is zero years old
+# Thus, to improve the interpretation we center the variable
+dat["age"] = dat.groupby("childid")["age"].transform(lambda x: x - x.mean())
+
+# Refit the model, again, without the random intercepts
+# Now, age is centered around 0
+# But 0 means the original mean: 5.77
+mlm_mod = sm.MixedLM.from_formula(
+    formula = 'vsae ~ age * C(sicdegp)', 
+    groups = 'childid', 
+    re_formula="0 + age", 
+    data=dat
+)
+# Run the fit
+mlm_result = mlm_mod.fit()
+# Print out the summary of the fit
+mlm_result.summary()
+
+### --  1.1 Significance Testing - Comparison to Regular Linear Regression
+
+# Random Effects Mixed Model
+mlm_mod = sm.MixedLM.from_formula(
+    formula = 'vsae ~ age * C(sicdegp)', 
+    groups = 'childid', 
+    re_formula="0 + age", 
+    data=dat
+)
+
+# OLS model - no mixed effects
+ols_mod = sm.OLS.from_formula(
+    formula = "vsae ~ age * C(sicdegp)",
+    data = dat
+)
+
+# Run each of the fits
+mlm_result = mlm_mod.fit()
+ols_result = ols_mod.fit()
+
+# Print out the summary of the fit
+print(mlm_result.summary())
+print(ols_result.summary())
+
+### --- 2. Marginal Model
+
+# Fit the exchangable covariance GEE
+model_exch = sm.GEE.from_formula(
+    formula = "vsae ~ age * C(sicdegp)",
+    groups="childid",
+    cov_struct=sm.cov_struct.Exchangeable(), 
+    data=dat
+    ).fit()
+
+# Fit the independent covariance GEE
+model_indep = sm.GEE.from_formula(
+    "vsae ~ age * C(sicdegp)",
+    groups="childid",
+    cov_struct = sm.cov_struct.Independence(), 
+    data=dat
+    ).fit()
+
+# We cannot fit an autoregressive model, but this is how 
+# we would fit it if we had equally spaced ages
+# model_indep = sm.GEE.from_formula(
+#     "vsae ~ age * C(sicdegp)",
+#     groups="age",
+#     cov_struct = sm.cov_struct.Autoregressive(), 
+#     data=dat
+#     ).fit()
+
+### --- 2.1 Comparison of Model Parameters and Standard Errors
+
+# Construct a datafame of the parameter estimates
+# and their standard errors
+x = pd.DataFrame(
+    {
+        "OLS_Params": ols_result.params,
+        "OLS_SE": ols_result.bse,
+        "MLM_Params": mlm_result.params,
+        "MLM_SE": mlm_result.bse,
+        "GEE_Exch_Params": model_exch.params, 
+        "GEE_Exch_SE": model_exch.bse,
+        "GEE_Indep_Params": model_indep.params, 
+        "GEE_Indep_SE": model_indep.bse
+    }
+)
+# Ensure the ordering is logical
+x = x[["OLS_Params", "OLS_SE", "MLM_Params", "MLM_SE", "GEE_Exch_Params", 
+       "GEE_Exch_SE", "GEE_Indep_Params", "GEE_Indep_SE"]]
+# Round the results of the estimates to two decimal places
+x = np.round(x, 2)
+# Print out the results in a pretty way
+display(HTML(x.to_html()))
+
+
+```
