@@ -46,6 +46,12 @@ Overview of contents:
      - `./lab/03_Marginal_and_Multilevel_Models.ipynb`
      - `./lab/04_Marginal_and_Multilevel_Models_NHANES.ipynb`
 4. Special Topics
+   - 4.1 Other Types of Dependent Variables
+   - 4.2 Should We Use Survey Weights When Fitting Models?
+   - 4.3 Bayesian Approaches to Statistics and Modeling: Introduction
+   - 4.4 Bayesian Approaches to Statistics and Modeling: Case Study
+   - 4.5 Forum Question
+   - 4.6 Python Lab - `./lab/05_Bayesian_Framework.ipynb`
 
 ## 1. Considerations for Statistical Modeling
 
