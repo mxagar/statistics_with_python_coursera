@@ -35,6 +35,17 @@ Overview of contents:
    - 2.7 Logistic Regression: Reading - `Stats_with_Python_Logistic-Regression-Overview.pdf`
    - 2.8 Python Lab - `02_LinearLogisticRegression_NHANES.ipynb`
 3. Fitting Models to Dependent Data: Multilevel and Marginal Models
+   - 3.1 Multilevel Linear Regression Models - Continuous Dependent Variables (Outcome)
+     - Example: European Social Survey (ESS) Dataset
+   - 3.2 Multilevel Logistic Regression Models - Binary Dependent Variables (Outcome)
+   - 3.3 Hiearchical Models Web App from Cal Poly
+   - 3.4 What are Marginal Models and Why Do We Fit Them?
+   - 3.5 Marginal Linear Regression Models - Continuous Dependent Variables (Outcome)
+   - 3.6 Marginal Logistic Regression - Binary Dependent Variables (Outcome)
+   - 3.7 Python Lab: Multi-Level and Marginal Models for Dependent Data
+     - `./lab/03_Marginal_and_Multilevel_Models.ipynb`
+     - `./lab/04_Marginal_and_Multilevel_Models_NHANES.ipynb`
+4. Special Topics
 
 ## 1. Considerations for Statistical Modeling
 
@@ -1365,5 +1376,153 @@ x = np.round(x, 2)
 # Print out the results in a pretty way
 display(HTML(x.to_html()))
 
-
 ```
+
+## 4. Special Topics
+
+### 4.1 Other Types of Dependent Variables
+
+Some minor comments and links are provided to other typed of dependent variables (outcomes):
+
+- Multinonial response models: categorical response/outcome variables with more than 2 levels
+- Ordinal responses: categorical response/outcome variables with ordered levels, even though the distances between levels are unknown (e.g., Likert scalas in questionnaires).
+- Count responses: integers are the outcome.
+- Time to event response: Time to event data describes how long it takes for an event occurs. One of the most common examples is time until death being used as an outcome to assess the effectiveness of a new therapy or treatment.
+
+### 4.2 Should We Use Survey Weights When Fitting Models?
+
+Survey weights can remove the bias introduced by the design of the study: if certain subject groups are less represented in the sample in proportion to their presence in the real population, the corresponding weight is assigned to each of those subjects (i.e., the weight would increase its effect). So with weights it is possible to get **the model parameters of an unbiased dataset**.
+
+However, using weights is not enough. We still need to define/specify a correct model and we need to use it (e.g., carry out inferences) properly:
+
+- are the correct variables in the model?
+- is it linear the relationship between the variables or a curve?
+- ...
+
+Important notes:
+
+- It is possible that the correct model of the biased dataset (without weights) is not valid for the unbiased dataset (with weights).
+- Using weights inflates the standard error of the coefficients.
+
+Therefore, in practice, the general suggestion is the following:
+
+1. Define the model correctly.
+2. Fit the model without weights.
+3. Fut the model with weights.
+4. Now, two options:
+   - If the coefficients of both are similar but the standard errors are larger for the weighted case, report the unweighted case.
+   - If the coefficients are different, report the weighted case.
+
+That follows the quote: "All models are wring, but some are useful". In fact, we don't know truly when a model is correct.
+
+### 4.3 Bayesian Approaches to Statistics and Modeling: Introduction
+
+There are two main approaches for modeling the data:
+
+- The **Frequentist** approach, which is the one used in these courses until now: we have a population, we sample it (randomly) and compute parameters as constants: mean, proportion, etc. The approach considers that if we would run that infinitely we could get the true parameters. Thus, for a sample, the standard error of the parameters can be computed, which is the estimated spread of the sampling distirbution. At the end, we have point estimates and that's it.
+- The **Bayesian** approach does not yield point estimates of the parameters, but it rather produces distirbutions of the parameters which are updated as more data comes in.
+
+Example: we want to estimate the IQ scores at the university:
+
+1. First, we define a **prior** belief of the distribution, e.g. `N(mean=100,std=10)`. It does not matter if it's not correct.
+2. We start collecting data of IQs: 125, 115, 115, 120, 125, 117, ... We see that our Gaussian starts shifting to the right and shrinking as we get more data (because we are more certain and the measurements are more centered).
+3. With the new data we **update** our belief. Thus, the **posterior** belief or distirbution is generated.
+4. We repeat steps 2 and 3 using our last posterior as our new prior.
+
+![The Bayesian Cycle](./pics/bayesian_cycle.png)
+
+Note that the posterior model or distirbution is very powerfful: in contrast to the frequestist approach, we can compute the **credible interval** in which 95% of the IQs lie in our model. In the frequentist approach, we woul compute the **confidence interval**, but it is not the same: the confidence inteval tells us the interval in which the point estimeate will be 95% of the time if we repeat the process of measuring new equivalent samples many times.
+
+However, the bayesian approach has some drawbacks:
+
+- Unless we use simple beliefs/priors (e.g., the normal), the math gets very complicated very quickly.
+- Most models are so complex that we need to use sampling methods: the parameter distributions are not used as parametric models but as histograms.
+- They are computationally more expensive.
+
+### 4.4 Bayesian Approaches to Statistics and Modeling: Case Study
+
+We work on a case study: we want to predict a child's IQ based on
+
+- mom's age
+- whether mom went to highschool
+- mom's IQ
+
+![Bayesian Case Study: Dataset](./pics/bayesian_case_study_dataset.png)
+
+The prediction is modelled as a linear regression (we drop the highschool variable):
+
+`ChildIQ = beta_0 + beta_1 * MomIQ + beta_2 * MomAge`
+
+All parameters of the model are a distirbution!
+
+Now, we need to define: (1) the distirbution (2) and our beliefs (prior) on its parameters: belief and uncertainty.
+
+Any prior is valid, but we need to base them in reasons; each scientist can have different priors -- that's OK: priors are subjective, specially at the beginning. The more uncertain we are, the more spread we add to the distributions. If we can get information from other sources (e.g., papers, experts, etc.) to make better educated guesses, perfect. Example:
+
+- `beta_0 = N(0,20)`: we consider there is not intercept, but we're not sure.
+- `beta_1 = N(1,5)`: we thinks the mom's IQ can be the most relevant predictor.
+- `beta_2 = N(0,5)`: we think the mom's age should not have an effect.
+
+The regression model is then:
+
+`ChildIQ ~ N(beta_0 + beta_1 * MomIQ + beta_2 * MomAge, sigma_error)`.
+
+Note that it is a distirbution itself! The mean is the regression line and we have `sigma_error` as the spread of the model (i.e., the standard deviation).
+
+To fit the model, [Stan](https://mc-stan.org) is used: a domain specific language for bayesian statistics which can be interfaced with python. However, no code is shown, just the results.
+
+#### Parameter Estimates after Fitting the Model
+
+In the frequentist approach we have one point testimate and its standard error; now, we have a complete distirbution for each parameter! These distributions are computed as histograms after sampling the underlying distributions, since parametric computation would be very expensive.
+
+![Parameter Posteriors](./pics/bayesian_framework_parameter_posteriors.png)
+
+Having a complete distribution/histogram is very powerful: it gives us a lot of information: 
+
+- If we make a simplified use of it, we can always take the mean (and std. deviation) of the histogram of each parameter and estimate the `ChildIQ`.
+- By observing each distribution, we can see how important or significant a parameter is: if the 0 value is contained in a cenetered region of the histogram, then, it could be that tht parameter is not significant, i.e., it has no effetct in the outcome.
+
+We can plot the samples of the parameter distributions against each other to see whether there is any relationship. In our case, we see visually that there is no colinearity -- that is good!
+
+![Parameter Relationship](./pics/bayesian_framework_parameter_relationship.png)
+
+We can plot the so called **normalized posterior intervals**: as far as I understand, we simulate the moddel for each observation and plot where the observed point is in the expected distribution; each time the expected distribution is different, but they are nomalized to the range `[-1,1]`. Red points lie outside the 95% credible intervals.
+
+![Normalized Posterior Intervals](./pics/normalized_posteior_intervals.png)
+
+A very important plot is the **posterior predictive check**: it plots the outcome distribution of each simulation and the outcome distribution of the real data.
+
+![Posterior Predictive Check](./pics/posterior_predictive_check.png)
+
+In the plot we see some improvements/differences we should consider:
+
+- The real distirbution is skewed.
+- There is a thick tail on the left: we underpredict the occurrences around IQ 50 and overpredict IQs around 75.
+
+Next section explains what is done to address that.
+
+#### Improving the Model
+
+We define 6 models in total, as follows:
+
+- According to the until now unused high school binary variable: 2x
+- We group IQs in 3 clusters: low (< 85), medium (85-115), high (>115)
+
+Each model has its own parameters, which are again distributions. It is like a multi-level regression. Additionally, we allow the distributions to be *skew-normal*, not only normal.
+
+![Bayesian Multi-Level Regression](./pics/bayesian_multilevel_regression.png)
+
+Thus, we get a lot of parameter distributions; by using them, we sample from each off the 6 models and we get our final response distribution. That is better than the original one.
+
+Next figure shown the 6 intercepts of teh 6 models, all centered around 0; note that the larger the spread, the larger the uncertainty.
+
+![Multi-level Intercept Distributions](./pics/multilevel_intercept_distributions.png)
+
+The **posterior predictive check** of the improved model looks better:
+
+![Improved Posterior Predictive Check](./pics/posterior_predictive_check_improved.png)
+
+#### Forum Questions
+
+Bayesian Approaches Case Study: Part II, min 11 approx: Normalized Posterior Intervals
+A simulation is done for each data-point? I would have expected that we fit the model with the entire dataset?
