@@ -1522,7 +1522,48 @@ The **posterior predictive check** of the improved model looks better:
 
 ![Improved Posterior Predictive Check](./pics/posterior_predictive_check_improved.png)
 
-#### Forum Questions
+### 4.5 Forum Question
 
-Bayesian Approaches Case Study: Part II, min 11 approx: Normalized Posterior Intervals
-A simulation is done for each data-point? I would have expected that we fit the model with the entire dataset?
+#### Question
+
+H​ello everybody,
+
+I​n the video Bayesian Approaches Case Study: Part II (min 11 approx), the instructor says that normalized posterior intervals are plotted for each observation. 
+
+I'm a bit confused with the explanation: A simulation is done for each data-point, i.e., we get an outcome distribution for each data-point after sampling our prior prameter distributions? Or instead, a simulation is done after fitting the entire dataset and then each datapoint yields a distribution, because the model is a linear combination of distributions?
+
+T​hank you,
+
+M​ikel
+
+#### Answer
+
+Hi Mikel :)
+
+This video from Ben Lambert does a great job of walking through the process...
+
+https://www.youtube.com/watch?v=TMnXQ6G6E5Y&list=PLwJRxp3blEvZ8AKMXOy0fc0cqT61GsKCG
+
+The video is part of a series...
+
+https://www.youtube.com/playlist?list=PLwJRxp3blEvZ8AKMXOy0fc0cqT61GsKCG
+
+The series roughly follows the content of Lambert's text - A Student's Guide to Bayesian Statistics, which is also excellent.
+
+Did the video address your question?  Please let me know!
+
+Best, Brian
+
+### 4.6 Python Lab - `./lab/05_Bayesian_Framework.ipynb`
+
+The notebook from last week came out of the blue: in the explanation viddeo they assume some concepts were explained -- but they were not.
+
+All in all, the notebook explains how to apply Bayesian statistics: a prior belief is updated with observations to better represent the reality.
+
+I won't paste the code here, since I see no real use with such a tiny introduction.
+
+Overview of contents from `./lab/05_Bayesian_Framework.ipynb`:
+
+0. Definitions
+1. Example 1: Coin Tosses
+2. Example 2: IQ Values at University
