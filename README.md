@@ -15,14 +15,14 @@ The folder `utils` contains some cheatsheets from [Datacamp](), not pushed to th
 - [Cheatsheet for SciPy](https://www.datacamp.com/community/blog/python-scipy-cheat-sheet#gs.JDSg3OI)
 - [Cheatsheet for Matplotlib](https://www.datacamp.com/community/blog/python-matplotlib-cheat-sheet#gs.uEKySpY)
 
-In my case, the Coursera Specialization did not bring so much; I learned how to apply some statistical data analysis with pandas and python, since I had more experience with R, regarding statistics. **However, concerning the theory, my notes contained in the following file are much more useful**:
+In my case, the Coursera Specialization did not bring so much; I learned how to apply some statistical data analysis with pandas and python, since I had more experience with R, regarding statistics. **As far as the theory is concerned, I think that my notes contained in the following file are much more useful**:
 
 `Statistical_Analysis_Notes.pdf`
 
 #### TODOs
 
-[x] Move my old notes on statistics to here.
-[ ] Add a summary notebook on statistics based on these two Medium articles
+- [x] Move my old notes on statistics to here.
+- [ ] Add a summary notebook on statistics based on these two Medium articles
   - [Statistics 1](https://medium.com/@jonathan-hui/statistics-i-in-data-science-machine-learning-40444379dd43)
   - [Statistics 2](https://jonathan-hui.medium.com/statistics-ii-in-data-science-machine-learning-d3daad84dae4)
 
