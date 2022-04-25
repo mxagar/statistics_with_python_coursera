@@ -1,6 +1,6 @@
 # Statistics with Python - Coursera / University of Michigan
 
-My personal notes taken while following the Coursera Specialization ["Statistics with Python"](https://www.coursera.org/specializations/statistics-with-python), from the University of Michingan, hosted by Dr. Brenda Gunderson.
+These are my personal notes taken while following the Coursera Specialization ["Statistics with Python"](https://www.coursera.org/specializations/statistics-with-python), from the University of Michingan, hosted by Dr. Brenda Gunderson.
 
 The Specialization is divided in three courses and each of one has a subfolder with the course notes:
 
@@ -28,4 +28,4 @@ In my case, the Coursera Specialization did not bring so much; I learned how to 
 
 
 Mikel Sagardia, 2022.
-No warranties.
+No guarantees.
